@@ -1,0 +1,13 @@
+\begin{thebibliography}{}
+
+\bibitem[Dubey, 2019]{kaggle_dset}
+Dubey, S. (2019).
+\newblock
+  \url{https://www.kaggle.com/datasets/tourist55/alzheimers-dataset-4-class-of-images?select=Alzheimer_s+Dataset}.
+
+\bibitem[Staff, 2022]{alz_desc}
+Staff, M.~C. (2022).
+\newblock
+  \url{https://www.mayoclinic.org/diseases-conditions/alzheimers-disease/in-depth/alzheimers/art-20048075#:~:text=To%20diagnose%20Alzheimer's%20dementia%2C%20doctors,other%20possible%20causes%20of%20impairment.}
+
+\end{thebibliography}

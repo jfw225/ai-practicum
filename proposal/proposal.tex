@@ -1,0 +1,99 @@
+\documentclass[10pt]{article}
+
+\usepackage{tex-assets/sbc-template} 
+\usepackage{graphicx,url}
+\usepackage{url}
+\usepackage[utf8]{inputenc} 
+\usepackage[T1]{fontenc}
+\usepackage[normalem]{ulem}
+\usepackage[hidelinks]{hyperref}
+
+\usepackage{natbib}
+\usepackage{amssymb} 
+\usepackage{mathalfa} 
+\usepackage{algorithm} 
+\usepackage{algpseudocode} 
+\usepackage[table]{xcolor}
+\usepackage{array}
+\usepackage{titlesec}
+\usepackage{mdframed}
+\usepackage{listings}
+
+\usepackage{amsmath} 
+\usepackage{booktabs}
+
+\usepackage{indentfirst}
+\usepackage{wrapfig}
+
+\urlstyle{same}
+
+\newcolumntype{L}[1]{>{\raggedright\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+\newcolumntype{C}[1]{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+\newcolumntype{R}[1]{>{\raggedleft\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+
+\newcommand\Tstrut{\rule{0pt}{2.6ex}} 
+\newcommand\Bstrut{\rule[-0.9ex]{0pt}{0pt}} 
+\newcommand{\scell}[2][c]{\begin{tabular}[#1]{@{}c@{}}#2\end{tabular}}
+
+\usepackage[nolist,nohyperlinks]{acronym}
+
+\newcommand{\baseline}[0]{\textit{\textbf{baseline design}}}
+\newcommand{\alternative}[0]{\textit{\textbf{alternative design}}}
+
+\title{Diagnosing Alzheimer's Disease from Brain MRIs using Deep Learning}
+
+\author{Jacob Diaz (jld349@cornell.edu), Joseph Whelan (jfw225@cornell.edu)}
+
+\address{CS 4701, Practicum in Artificial Intelligence, Fall 2022, Cornell University}
+
+
+
+\begin{document} 
+	
+	\maketitle
+	
+	\section{Introduction}
+	The current standard for diagnosing Alzheimer's Disease requires significant time and resources. According to \cite[Mayo Clinic]{alz_desc}, doctors perform a physical exam, neurological exam, and cognitive tests to 
+	"judge functional abilities and identify behavioral changes." Included in this process is magnetic resonance imaging (MRI) of the brain which produces a detailed view of the brain's structure in the form of images.
+	Our goal is to train a deep neural network to identify underlying structures in the brain from MRI images and use this information to diagnose Alzheimer's Disease in a wide-variety of patients. If successful, we would develop a highly-competent model that would significantly reduce the time and cost of diagnosing Alzheimer's Disease. Using our model, we will build a web application that allows medical professionals to upload  
+	MRI images and receive an output classification which they can use to make a better informed decision on a patient's diagnosis.
+
+	\section{Approach}
+	The first major hurdle with any machine learning problem is finding a suitable dataset. Fortunately, we found a dataset with approximately 5,000 images of brain MRIs with annotations indicating the severity of a patient's Alzheimer's Disease \citep{kaggle_dset}. Although we feel that this dataset will be sufficient for our purposes, we have also applied for access to some larger datasets that may help us develop a more robust model.
+
+	Given that we already have an annotated dataset, the next step is analyzing the data and building an appropriate model architecture.
+	\textbf{JACOB THIS IS WHERE YOU WRITE STUFF. I need you to write paragraphs for bullets 5 and 6 on the instructions}
+
+	Once we have a working model, we will build a web application using TypeScript and React which will allow medical professionals to upload MRI images and receive a diagnosis. Upon upload, these images will be sent to a Python backend which will perform inference using the model. The backend will then return the classification to the frontend which will display it to the user.
+
+	\pagebreak
+	\section{Timeline}
+	We will be meeting at least once a week until the final presentation to discuss our progress, plan for the next week, and work on any upcoming deadlines. Our tentative timeline is as follows:
+	\begin{table}[!ht]
+		\centering
+		\begin{tabular}{|| c | p{80mm} ||} 
+			\hline
+			Date & Goal \\ [0.5ex] 
+			\hline\hline
+			Sep 30 & Turn in project proposal. \\ [0.5ex]
+			\hline
+			Oct 7 & Finish data analysis and model architecture. \\ [0.5ex]
+			\hline
+			Oct 14 & Finish model training and testing. \\ [0.5ex]
+			\hline
+			Oct 25 & Build the web frontend using TypeScript and React. This will include the upload form and the display of the classification. \\ [0.5ex]
+			\hline
+			Nov 4 & Build the web backend using Python. This will include the model inference and the API. \\ [0.5ex]
+			\hline
+			Nov 14 & Start working on the final presentation powerpoint. \\ [0.5ex]
+			\hline
+			Nov 22 & Finish final presentation. \\ [0.5ex]
+			\hline
+		\end{tabular}
+		\caption{\label{tab:timeline} Timeline for the Completion of our Project}
+	\end{table}
+
+    \bibliographystyle{apalike}
+	\bibliography{tex-assets/references}
+	
+\end{document}
