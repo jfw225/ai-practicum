@@ -90,12 +90,13 @@ def main():
       curr_fmri = pickle.load( open(f'{path}/{subject}/{fmri_folder}', 'rb') )
       if curr_fmri.shape == (140, 48, 64, 64):
           create_torch(curr_fmri, fmri_folder)
-          print(f'{fmri_folder}:  {i}  {curr_fmri.shape}')
+          fmri_name = fmri_folder[0:7]
+          print(f'{fmri_name}:  {i}  {curr_fmri.shape}')
           i += 1
           if subject in subject_scans_dict:
-            subject_scans_dict[subject].append(fmri_folder)
+            subject_scans_dict[subject].append(fmri_name)
           else:
-            subject_scans_dict[subject] = [fmri_folder]
+            subject_scans_dict[subject] = [fmri_name]
 
         # plt.pcolormesh(curr_fmri[0,0,:,:], cmap=cm.gray)
         # plt.show()
