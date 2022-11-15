@@ -63,7 +63,8 @@ def create_torch(curr_fmri, fmri_folder):
   PATH = '/home/ai-prac/ai-practicum/fmri-data/torch-data/data/'
 
 
-  curr_fmri_torch = torch.from_numpy(curr_fmri.astype('float64'))
+  # curr_fmri_torch = torch.from_numpy(curr_fmri.astype('float64'))
+  curr_fmri_torch = torch.from_numpy(curr_fmri.astype('int16'))
   assert(curr_fmri_torch.size() == torch.Size([140,48,64,64]))
   torch.save( curr_fmri_torch,f'{PATH}/{fmri_folder}.pt')
 
@@ -79,6 +80,7 @@ def main():
   # d_type_counts = {'float64': 0, 'uint16': 0}
   # d_type_dims = {'float64': set(), 'uint16': set()}
   # min_max_lst = []
+  max_dec_lst = []
   subject_scans_dict = {}
   i = 1
   for subject in os.listdir(path):
@@ -89,14 +91,27 @@ def main():
       # if i in [10,40]:
       curr_fmri = pickle.load( open(f'{path}/{subject}/{fmri_folder}', 'rb') )
       if curr_fmri.shape == (140, 48, 64, 64):
-          create_torch(curr_fmri, fmri_folder)
           fmri_name = fmri_folder[0:7]
-          print(f'{fmri_name}:  {i}  {curr_fmri.shape}')
+          create_torch(curr_fmri, fmri_name)
+          print(f'{fmri_name}:  {i}  {curr_fmri.shape} min_size: {np.min_scalar_type(curr_fmri)}')
           i += 1
           if subject in subject_scans_dict:
             subject_scans_dict[subject].append(fmri_name)
           else:
             subject_scans_dict[subject] = [fmri_name]
+
+          # s = curr_fmri.astype(np.int16)
+          # assert((s == curr_fmri).all())
+
+
+          # s = set(map( lambda x: np.min_scalar_type(x) ,curr_fmri.flatten()))
+          # print(s)
+
+          # s = max(list(map( lambda x: str(x) ,curr_fmri.flatten())),key = len)
+          # print(s)
+
+          # max_dec_lst.append(np.min_scalar_type(curr_fmri))
+
 
         # plt.pcolormesh(curr_fmri[0,0,:,:], cmap=cm.gray)
         # plt.show()
@@ -107,7 +122,6 @@ def main():
       # d_type_dims[str(curr_fmri.dtype)].add(curr_fmri.shape)
 
       # min_max_lst.append( (np.max(curr_fmri), np.min(curr_fmri) ) )
-
 
   print(subject_scans_dict)
   # PATH = f"./fmri-data/torch-data/"
@@ -126,6 +140,7 @@ def main():
   # print(d_type_counts)
   # print(d_type_dims)
   # print(min_max_lst)
+  print(max_dec_lst)
 
 
 if __name__ == "__main__":
