@@ -1,0 +1,8 @@
+I353800:  1  (140, 48, 64, 64) min_size: float64
+{dtype('float16')}
+Traceback (most recent call last):
+  File "preprocess_data.py", line 141, in <module>
+    main()
+  File "preprocess_data.py", line 108, in main
+    assert(False)
+AssertionError

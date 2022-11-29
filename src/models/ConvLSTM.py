@@ -1,10 +1,12 @@
 import numpy as np
 import torch
 from torch import nn
+from torch.utils.data import Dataset, DataLoader
 import pandas as pd
 import pickle
 import random
 import itertools
+import time
 
 
 def train_test_split(split, subject_scans_dict):
@@ -13,9 +15,7 @@ def train_test_split(split, subject_scans_dict):
 
     subject_to_num_scans = dict(zip(list(subject_scans_dict.keys()), map(
         lambda x: len(x), list(subject_scans_dict.values()))))
-    # print(subject_to_num_scans)
     num_scans = sum(list(subject_to_num_scans.values()))
-    # print(num_scans)
 
     all_subjects = set(list(subject_scans_dict.keys()))
     num_train_scans = 0
@@ -41,8 +41,27 @@ def train_test_split(split, subject_scans_dict):
     # print(len(test_scans) + len(train_scans))
 
     # assert(len(set(test_scans).union(set(train_scans))) == 302)
-
     return train_scans, test_scans
+
+
+class FMRIDataset(Dataset):
+
+    def __init__(self, fmri_scan_ids, labels):
+        self.fmri_scan_ids = fmri_scan_ids
+        self.labels = labels
+
+    def __len__(self):
+        return len(self.fmri_scan_ids)
+
+    def __getitem__(self, fmri_scan_idx):
+        fmri_scan_id = self.fmri_scan_ids[fmri_scan_idx]
+
+        x = torch.load(
+            f'/home/ai-prac/ai-practicum/fmri-data/torch-data/data/{fmri_scan_id}.pt')
+        y = self.labels[fmri_scan_id]
+        return x, y
+
+        return train_scans, test_scans
 
 
 class ConvLSTM(nn.Module):
@@ -143,23 +162,44 @@ def main():
     PATH = '/home/ai-prac/ai-practicum/fmri-data/torch-data'
     subject_scans_dict = pickle.load(
         open(f'{PATH}/subject-scans-dict.pickle', 'rb'))
-    # print(subject_scans_dict)
+    train_scans, test_scans = train_test_split((.8, .2), subject_scans_dict)
 
-    train_data, test_data = train_test_split((.8, .2), subject_scans_dict)
+    # Find train and test labels
 
-    # Create labels
     PATH = '/home/ai-prac/ai-practicum/fmri-data/'
     fmri_df = pd.read_csv(f'{PATH}/fMRI_summary.csv')
     fmri_df = fmri_df[fmri_df['Description'] == 'Resting State fMRI']
     fmri_df = fmri_df[(fmri_df['Research Group'] == 'AD') |
                       (fmri_df['Research Group'] == 'CN')]
-
     keys = fmri_df["Image ID"].map(lambda x: f'I{x}')
-    values = fmri_df["Research Group"]
+    str_label_to_int = {'CN': 0, 'AD': 1}
+    values = list(
+        map(lambda x: str_label_to_int[x], fmri_df["Research Group"]))
+    all_labels = dict(zip(keys, values))
+    train_labels = {key: all_labels[key] for key in train_scans}
+    test_labels = {key: all_labels[key] for key in test_scans}
 
-    print(dict(zip(keys, values)))
+    # print(train_scans)
+    # print(test_scans)
+    # print(train_labels)
+    # print(test_labels)
 
-    # test_labels{}
+    training_set = FMRIDataset(train_scans, train_labels)
+    test_set = FMRIDataset(test_scans, test_labels)
+
+    training_generator = DataLoader(training_set)
+    test_generator = DataLoader(test_set)
+
+    i = 1
+    print('starting training')
+    for epoch in range(1):
+        # Training
+        for local_batch, local_labels in training_generator:
+            print(i)
+            i += 1
+            pass
+            # Transfer to GPU
+            # local_batch, local_labels = local_batch.to(device), local_labels.to(device)
 
     test_labels = dict()
     str_label_to_int = {'CN': 0, 'AD': 1}
@@ -169,15 +209,31 @@ def main():
         int_label = str_label_to_int[str_label]
         test_labels[fmri] = int_label
 
-    train_labels = dict()
-    for fmri in train_data:
-        print(fmri_df[fmri_df["Image ID"] == fmri])
-        str_label = fmri_df[fmri_df["Image ID"] == fmri]['Research Group']
-        int_label = str_label_to_int[str_label]
-        test_labels[fmri] = fmri_df[fmri_df["Image ID"]
-                                    == fmri]['Research Group']
+    # print(train_scans)
+    # print(test_scans)
+    # print(train_labels)
+    # print(test_labels)
 
-    print(len(fmri_df))
+        print(len(fmri_df))
+    training_set = FMRIDataset(train_scans, train_labels)
+    test_set = FMRIDataset(test_scans, test_labels)
+
+    # Create data loader
+    training_generator = DataLoader(training_set)
+    test_generator = DataLoader(test_set)
+
+    i = 1
+    print('starting training')
+    for epoch in range(1):
+        # Training
+        for local_batch, local_labels in training_generator:
+            print(i)
+            i += 1
+            pass
+            # Transfer to GPU
+            # local_batch, local_labels = local_batch.to(device), local_labels.to(device)
+
+    print('finished training')
 
     # Create data loader
 
