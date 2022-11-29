@@ -58,6 +58,7 @@ class FMRIDataset(Dataset):
 
 class ConvLSTM(nn.Module):
     def __init__(self, input_dim, hidden_dim, out_dim):
+        super(ConvLSTM, self).__init__()
         self.input_dim = input_dim
         self.hidden_dim = hidden_dim
         self.out_dim = out_dim
@@ -75,69 +76,93 @@ class ConvLSTM(nn.Module):
 
 class Convolution(nn.Module):
     def __init__(self, conv_kernel, pool_kernel):
+        super(Convolution, self).__init__()
         # (B, num_slides, num_slices, h, w) = input_dim
         self.conv_kernel = 3
         self.pool_kernel = 2
+
         self.reshape = nn.Flatten(0, 1)
 
-        self.cov3d_1 = nn.Conv3d(1, 32, conv_kernel)
-        self.batchnorm_1 = nn.BatchNorm3d(32)
+        self.cov3d_1 = nn.Conv3d(1, 8, conv_kernel)
+        self.batchnorm_1 = nn.BatchNorm3d(8)
         self.pooling3d_1 = nn.MaxPool3d(pool_kernel)
 
-        self.cov3d_2 = nn.Conv3d(32, 64, conv_kernel)
-        self.batchnorm_2 = nn.BatchNorm3d(64)
+        self.cov3d_2 = nn.Conv3d(8, 16, conv_kernel)
+        self.batchnorm_2 = nn.BatchNorm3d(16)
 
         self.pooling3d_2 = nn.MaxPool3d(pool_kernel)
 
-        self.cov3d_3 = nn.Conv3d(64, 128, conv_kernel)
-        self.batchnorm_3 = nn.BatchNorm3d(128)
-        self.cov3d_4 = nn.Conv3d(128, 128, conv_kernel)
-        self.batchnorm_4 = nn.BatchNorm3d(128)
+        self.cov3d_3 = nn.Conv3d(16, 32, conv_kernel)
+        self.batchnorm_3 = nn.BatchNorm3d(32)
+        self.cov3d_4 = nn.Conv3d(32, 32, conv_kernel)
+        self.batchnorm_4 = nn.BatchNorm3d(32)
         self.pooling3d_3 = nn.MaxPool3d(pool_kernel)
 
-        self.cov3d_5 = nn.Conv3d(128, 256, conv_kernel)
-        self.batchnorm_5 = nn.BatchNorm3d(256)
-        self.cov3d_6 = nn.Conv3d(256, 256, conv_kernel)
-        self.pooling3d_3 = nn.MaxPool3d(pool_kernel)
+        self.cov3d_5 = nn.Conv3d(32, 64, conv_kernel)
+        self.batchnorm_5 = nn.BatchNorm3d(64)
+
+        # self.cov3d_5 = nn.Conv3d(128, 256, conv_kernel)
+        # self.batchnorm_5 = nn.BatchNorm3d(256)
+        # self.cov3d_6 = nn.Conv3d(256, 256, conv_kernel)
+        # self.pooling3d_3 = nn.MaxPool3d(pool_kernel)
 
         self.flatten = nn.Flatten()
         self.dropout = nn.Dropout(0.2)
-        self.fc1 = nn.Linear(512, 256)
+        self.fc1 = nn.Linear(576, 192)
+        # self.fc1 = nn.Linear(512, 256)
         self.relu = nn.ReLU()
 
     def forward(self, input_tensor):
         (B, num_slides, num_slices, h, w) = input_tensor.shape
+        print(f'1: {(B, num_slides, num_slices, h, w)}')
 
         X = self.reshape(input_tensor)
+        print(f'2: {X.shape}')
         X = X[:, None, :, :, :]
+        print(f'3: {X.shape}')
+        print(X.dtype)
 
-        X = self.cov3d_1(input_tensor)
+        X = self.cov3d_1(X.float())
+        print(X.shape)
         X = self.batchnorm_1(X)
         X = self.pooling3d_1(X)
 
+        print(X.shape)
         X = self.cov3d_2(X)
+        print(X.shape)
         X = self.batchnorm_2(X)
 
         X = self.pooling3d_2(X)
+        print(X.shape)
 
         X = self.cov3d_3(X)
+        print(X.shape)
         X = self.batchnorm_3(X)
+        print(X.shape)
         X = self.cov3d_4(X)
+        print(X.shape)
 
         X = self.batchnorm_4(X)
         X = self.pooling3d_3(X)
+        print(X.shape)
 
         X = self.cov3d_5(X)
+        print(X.shape)
         X = self.batchnorm_5(X)
-        X = self.cov3d_6(X)
-        X = self.pooling3d_3(X)
+        print(X.shape)
+        # X = self.cov3d_6(X)
+        # X = self.pooling3d_3(X)
 
+        X = self.flatten(X)
+        print(X.shape)
         X = self.dropout(X)
         X = self.fc1(X)
+        print(X.shape)
         X = self.relu(X)
 
-        assert (B*num_slides, 256) == X.shape
-        X = torch.reshape(X, (B, num_slides, 256))
+        assert (B*num_slides, 192) == X.shape
+        X = torch.reshape(X, (B, num_slides, 192))
+        # X = torch.reshape(X, (B, num_slides, 256))
 
         return X
 
@@ -209,6 +234,7 @@ def main():
     test_generator = DataLoader(test_set)
 
     model = Convolution(3, 2)
+
     adam_optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 
     train(model, training_generator, test_generator,
