@@ -74,8 +74,7 @@ class ConvLSTM(nn.Module):
 
 
 class Convolution(nn.Module):
-    def __init__(self, input_dim, conv_kernel, pool_kernel):
-        self.input_dim = input_dim
+    def __init__(self, conv_kernel, pool_kernel):
         # (B, num_slides, num_slices, h, w) = input_dim
         self.conv_kernel = 3
         self.pool_kernel = 2
@@ -147,6 +146,33 @@ class LSTM():
     pass
 
 
+def train(model, train_dataloader, test_dataloader, loss_fn, optimizer, epochs):
+    print('starting training')
+    curr_epoch = 1
+    for epoch in range(epochs):
+        print(f'Starting epoch: {curr_epoch}/{epochs}')
+        epoch_start_time = time.time()
+        # Training
+        model.train()
+        for local_batch, local_labels in train_dataloader:
+            print(local_batch.shape)
+            print(local_labels)
+            optimizer.zero_grad()
+            predicted_output = model(local_batch)
+            print(predicted_output.shape)
+            assert (False)
+            curr_loss = loss_fn(predicted_output, local_labels)
+            curr_loss.backward()
+            optimizer.step()
+
+        # evaluate_model(train_dataloader, model, loss_fn)
+
+        print(f'Time for epoch {curr_epoch}: {time.time() - epoch_start_time}')
+        curr_epoch += 1
+
+    print('finished training')
+
+
 def main():
     # Create custom dataset class
 
@@ -181,6 +207,12 @@ def main():
 
     training_generator = DataLoader(training_set)
     test_generator = DataLoader(test_set)
+
+    model = Convolution(3, 2)
+    adam_optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
+
+    train(model, training_generator, test_generator,
+          loss_fn=0, optimizer=adam_optimizer, epochs=1)
 
     i = 1
     print('starting training')
