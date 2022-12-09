@@ -15,6 +15,13 @@ from torchmetrics import ROC
 from torchmetrics.classification import BinaryROC
 from matplotlib import pyplot as plt
 
+import torch.multiprocessing as mp
+from torch.utils.data.distributed import DistributedSampler
+from torch.nn.parallel import DistributedDataParallel as DDP
+from torch.distributed import init_process_group, destroy_process_group
+
+
+
 def sequential_train_test_split(split, subject_scans_dict):
     assert (len(split) == 2)
     assert (sum(split) == 1)
@@ -82,10 +89,8 @@ def get_FWHM_gaussian_kernel(fwhm):
     return  kernel_3d
 
 def get_FWHM_gaussian_blur(t, kernel_3d):
-    # reshaped_t = t[:,None,:,:,:].float().to(0)
-    # reshaped_k = kernel_3d[None,None,:,:,:].to(0)
-    reshaped_t = t[:,None,:,:,:].float()
-    reshaped_k = kernel_3d[None,None,:,:,:]
+    reshaped_t = t[:,None,:,:,:].float().to(0)
+    reshaped_k = kernel_3d[None,None,:,:,:].to(0)
 
     # 7 = kernel_3d.shape[0]= len(k) = len(ts) = len(gauss)
 
@@ -369,6 +374,21 @@ class ConvLSTM2(nn.Module):
         X = self.lstm(X)
         return X
 
+def ddp_setup(rank, world_size):
+  '''
+  Args: 
+      rank: Unique identifier of each process
+      world_size: Total number of processes
+  '''
+  os.environ['MASTER_ADDR'] = 'localhost'
+  os.environ['MASTER_PORT'] = '12355'
+  os.environ['TORCH_DISTRIBUTED_DEBUG'] = 'DETAIL'
+  init_process_group(backend = 'nccl', rank=rank, world_size= world_size)
+
+
+#TODO: self.model() ==> self.model.module()
+# refactor train()
+
 class Trainer():
     def __init__(
         self,
@@ -391,6 +411,8 @@ class Trainer():
         self.metric_interval = metric_interval
         self.validation_data = validation_data
         self.test_data = test_data
+        self.model = DDP(self.model, device_ids = [self.gpu_id], find_unused_parameters=True)
+
     
     def _run_batch(self, batch_tensor: torch.tensor, batch_labels: torch.tensor):
         self.optimizer.zero_grad()
@@ -403,7 +425,9 @@ class Trainer():
         self.model.train()
         print(f'\t[GPU {self.gpu_id}] Epoch {epoch}')
         i = 1
-        all = len(self.train_data)
+        ########### Did not fix bug #############
+        # self.train_data.sampler.set_epoch(epoch)
+        ########################################
         for batch_tensor, batch_labels in self.train_data:
             # print(f'\t{i}/{len(self.train_data)}')
             i += 1
@@ -413,48 +437,30 @@ class Trainer():
             self._run_batch(batch_tensor, batch_labels)
 
     def _save_checkpoint(self, epoch: int):
-        checkpoint = self.model.state_dict()
+        checkpoint = self.model.module.state_dict()
         torch.save(checkpoint, 'checkpoint_model.pt')
         print(f'\tModel Saved at Epoch {epoch}')
 
     def train(self, num_epochs: int):
-        # output_last = self.metric_interval < 1 or num_epochs % self.metric_interval != 0
-
-        # output last if interval is less than 1 always
+        # output last if self.metric_interval is less than 1 always
         # output last if num_epochs % self.metric_interval != 0
-
-        # for epoch in range(1, num_epochs + 1):
-        #     self._run_epoch(epoch)
-        #     if self.save_interval > 0 and epoch % self.save_interval == 0:
-        #         self._save_checkpoint(epoch)
-        #     elif epoch == num_epochs:
-        #         self._save_checkpoint(epoch)
-
-        #     if self.metric_interval > 0 and epoch % self.metric_interval == 0:
-        #         self.evaluate(self.train_data, sv_roc = True)
-        #         self.evaluate(self.validation_data)
-        
-        # if output_last:
-        #     self.evaluate(self.train_data, sv_roc = True)
-        #     if self.validation_data != None:
-        #         self.evaluate(self.validation_data)
 
         for epoch in range(1, num_epochs + 1):
             self._run_epoch(epoch)
             
-            if self.save_interval > 0 and epoch % self.save_interval == 0:
+            if self.gpu_id == 0 and (self.save_interval > 0 and epoch % self.save_interval == 0):
                 self._save_checkpoint(epoch)
-            elif epoch == num_epochs:  ## save last model
+            elif self.gpu_id == 0 and epoch == num_epochs:  ## save last model
                 self._save_checkpoint(epoch)
 
-            if self.metric_interval > 0 and epoch % self.metric_interval == 0:
-                self.evaluate(self.train_data, sv_roc = True)
-                if self.validation_data != None:
-                    self.evaluate(self.validation_data)
-            elif epoch == num_epochs:  ## Evaluate final model 
-                self.evaluate(self.train_data, sv_roc = True)
-                if self.validation_data != None:
-                    self.evaluate(self.validation_data)
+            # if self.gpu_id == 0 and (self.metric_interval > 0 and epoch % self.metric_interval == 0):
+            #     self.evaluate(self.train_data, sv_roc = True)
+            #     if self.validation_data != None:
+            #         self.evaluate(self.validation_data)
+            # elif self.gpu_id == 0 and epoch == num_epochs:  ## Evaluate final model 
+            #     self.evaluate(self.train_data, sv_roc = True)
+            #     if self.validation_data != None:
+            #         self.evaluate(self.validation_data)
 
     def evaluate(self, dataloader: DataLoader, sv_roc = False):
         with torch.no_grad():
@@ -539,25 +545,6 @@ def get_train_test_dataset(split : tuple):
         kernel_3d = get_FWHM_gaussian_kernel(6)
         assert( 7 == kernel_3d.shape[0] )
 
-
-        #################
-        # t = torch.rand((140,48,64,64))
-
-        # a = time.time()
-        # for i in range(100):
-        #     get_FWHM_gaussian_blur(t, kernel_3d)
-        # b = time.time()
-        # print(f'No gpu time {b - a}')
-
-        # a = time.time()
-        # for i in range(100):
-        #     get_FWHM_gaussian_blur(t.to(0), kernel_3d.to(0))
-        # b = time.time()
-        # print(f'No gpu time {b - a}')
-
-        # assert False
-        #################
-
         training_set = FMRIDataset(train_scans, train_labels, normalize = False, kernel_3d = kernel_3d)
         print(f'Num Train 0 (CN): {list(train_labels.values()).count(0)}')
         print(f'Num Train 1 (AD): {list(train_labels.values()).count(1)}')
@@ -568,42 +555,57 @@ def get_train_test_dataset(split : tuple):
 
         return training_set, test_set
 
+
 def get_train_test_dataloader( split: tuple, batch_size):
     training_set, test_set = get_train_test_dataset(split)
 
     training_generator = DataLoader(
                             training_set, 
                             batch_size = batch_size,
-                            pin_memory = False, ## TODO: Does nothing since get_FWHM_gaussian_blur() calls .to(0)
-                            shuffle = True)
+                            pin_memory = True, ## TODO: Does nothing since get_FWHM_gaussian_blur() calls .to(0)
+                            shuffle = False, # False since since sampler does shuffling
+                            sampler = DistributedSampler(training_set))
 
     test_generator = DataLoader(
                         test_set, 
                         batch_size = 1,
-                        pin_memory = False, ## TODO: Does nothing since get_FWHM_gaussian_blur() calls .to(0)
-                        shuffle = True)
+                        pin_memory = True, ## TODO: Does nothing since get_FWHM_gaussian_blur() calls .to(0)
+                        shuffle = False, # False since sampler does shuffling
+                        sampler = DistributedSampler(test_set))
 
     return training_generator, test_generator
 
-def main(device):
+def load_and_test_model(untrained_model,data_generator):
+    
+    adam_optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
+    ce_loss = nn.CrossEntropyLoss()
+    rank = 0
+        
+    untrained_model.load_state_dict(torch.load('checkpoint_model.pt'))
+    untrained_model.evaluate( data_generator, sv_roc = False)
+
+    trainer = Trainer( model = untrained_model, optimizer = adam_optimizer, loss_fn = ce_loss, gpu_id = rank, save_interval = 1, metric_interval = 1, train_data = training_generator)
+
+
+
+def main(rank: int, world_size: int):
     random.seed(123)
-    batch_size = 3
+    ddp_setup(rank, world_size)
+    batch_size = 1
     training_generator, test_generator = get_train_test_dataloader((0.8, 0.2), batch_size)
 
     model = ConvLSTM(conv_kernel = 3, pool_kernel = 2, input_dim = 192, output_dim = 192)
-    # model = ConvLSTM2(input_dim = 128, output_dim = 128)
-    # model = ConvolutionOverfit()
+    ## model = ConvLSTM2(input_dim = 128, output_dim = 128)
+    ## model = ConvolutionOverfit()
 
 
-    # adam_optimizer = torch.optim.Adam(model.parameters(), lr=0.001, weight_decay = 0.0001)
+    ## adam_optimizer = torch.optim.Adam(model.parameters(), lr=0.001, weight_decay = 0.0001)
     adam_optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 
     ce_loss = nn.CrossEntropyLoss()
 
-    # trainer = Trainer( model = model, optimizer = adam_optimizer, loss_fn = ce_loss, gpu_id = 0, save_interval = 1, metric_interval = 1, train_data = training_generator, validation_data = test_generator)
-    trainer = Trainer( model = model, optimizer = adam_optimizer, loss_fn = ce_loss, gpu_id = 0, save_interval = 1, metric_interval = 1, train_data = test_generator)
-
-    # assert False
+    trainer = Trainer( model = model, optimizer = adam_optimizer, loss_fn = ce_loss, gpu_id = rank, save_interval = 1, metric_interval = 1, train_data = training_generator, validation_data = test_generator)
+    ## assert False
     s = datetime.now()
     print('Starting Training')
     num_epochs = 10
@@ -611,9 +613,9 @@ def main(device):
     print('Finished Training')
     f = datetime.now()
     print(f'Time to run {num_epochs} epochs: {f-s} (HH:MM:SS)')
+    destroy_process_group()
 
 
 if __name__ == "__main__":
-    import sys
-    device = 0 
-    main(device)
+    world_size = torch.cuda.device_count()
+    mp.spawn(main, args=(world_size,), nprocs=world_size)
