@@ -14,7 +14,7 @@ from datetime import datetime, timedelta
 from torchmetrics import ROC
 from torchmetrics.classification import BinaryROC
 from matplotlib import pyplot as plt
-from models import ConvLSTM,ConvolutionOverfit
+from models import ConvLSTM,ConvolutionOverfit, ConvolutionOverfit3D
 from utils import *
 from runners import Trainer
 from data import get_constant_data, get_half_half
@@ -29,8 +29,8 @@ def main(device):
     # training_generator, test_generator = get_train_test_dataloader((0.8, 0.2), batch_size)
     # data = get_constant_data()
     data = get_half_half(16, VAYNE_PATH)
-    # model = ConvLSTM(conv_kernel = 3, pool_kernel = 2, input_dim = 192, output_dim = 192)
-    model = ConvolutionOverfit()
+    model = ConvLSTM(conv_kernel = 3, pool_kernel = 2, input_dim = 192, output_dim = 192)
+    # model = ConvolutionOverfit3D()
     # summary(model.to(0), (1,140, 48, 64, 64))
 
     # model = ConvLSTM2(input_dim = 128, output_dim = 128)
@@ -38,7 +38,7 @@ def main(device):
 
 
     # adam_optimizer = torch.optim.Adam(model.parameters(), lr=0.001, weight_decay = 0.0001)
-    adam_optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
+    adam_optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 
     ce_loss = nn.CrossEntropyLoss()
 

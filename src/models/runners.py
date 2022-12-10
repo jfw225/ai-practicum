@@ -106,6 +106,8 @@ class Trainer():
                     self.evaluate(self.validation_data)
 
     def evaluate(self, dataloader: DataLoader, sv_roc = False):
+        softmax = nn.Softmax(dim = 1)
+
         with torch.no_grad():
             self.model.eval()
             cumulative_loss = 0
@@ -121,8 +123,8 @@ class Trainer():
                 batch_labels = batch_labels.to(self.gpu_id)
                 predicted_output = self.model(batch_tensor)
                 cumulative_loss += self.loss_fn(predicted_output, batch_labels)
+
                 if sv_roc:
-                    softmax = nn.Softmax(dim = 1)
                     all_preds = torch.cat( (all_preds, (softmax(predicted_output)[:,1])) )
                     all_labels = torch.cat( (all_labels, batch_labels) )
 
@@ -137,8 +139,8 @@ class Trainer():
 
             loss = cumulative_loss/num_batches
             accuracy = num_correct/total
-            print("\t\tpredicted_output: ", all_preds)
-            print("\t\texpected_labels: ", all_labels)
+            # print("\t\tpredicted_output: ", all_preds)
+            # print("\t\texpected_labels: ", all_labels)
             print(f'\t\tLoss: {loss} = {cumulative_loss}/{num_batches}')
             print(f'\t\tAccuracy: {accuracy} = {num_correct}/{total}')
             if sv_roc:
