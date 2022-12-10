@@ -20,14 +20,15 @@ from runners import Trainer
 from data import get_constant_data, get_half_half
 from torchinfo import summary
 
-
+# path to the data on the vayne server
+VAYNE_PATH = "/home/joe/ai-practicum/fmri-data/"
 
 def main(device):
     random.seed(123)
     batch_size = 3
-    training_generator, test_generator = get_train_test_dataloader((0.8, 0.2), batch_size)
+    # training_generator, test_generator = get_train_test_dataloader((0.8, 0.2), batch_size)
     # data = get_constant_data()
-    data = get_half_half(16)
+    data = get_half_half(16, VAYNE_PATH)
     # model = ConvLSTM(conv_kernel = 3, pool_kernel = 2, input_dim = 192, output_dim = 192)
     model = ConvolutionOverfit()
     # summary(model.to(0), (1,140, 48, 64, 64))

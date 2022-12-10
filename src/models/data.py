@@ -15,12 +15,13 @@ from torchmetrics import ROC
 from torchmetrics.classification import BinaryROC
 from matplotlib import pyplot as plt
 
-SUMMARY_PATH = '/home/ai-prac/ai-practicum/fmri-data/'
+# the default path for jacob
+DEFAULT_DATA_PATH = "/home/ai-prac/ai-practicum/fmri-data/"
 
 class DataSummary:
-    def __init__(self):
+    def __init__(self, data_path: str = DEFAULT_DATA_PATH):
         # load the summary df
-        self.fmri_df = DataSummary.load_summary()
+        self.fmri_df = DataSummary.load_summary(data_path)
 
         # create a mapping from subject id to image id
         self._label_map = self.create_label_map()
@@ -48,12 +49,12 @@ class DataSummary:
 
 
     @staticmethod
-    def load_summary():
+    def load_summary(data_path):
         """
         Loads the summary csv file.
         """
 
-        fmri_df = pd.read_csv(f'{SUMMARY_PATH}/fMRI_summary.csv')
+        fmri_df = pd.read_csv(os.path.join(data_path, "fMRI_summary.csv"))
         fmri_df = fmri_df[fmri_df['Description'] == 'Resting State fMRI']
         fmri_df = fmri_df[(fmri_df['Research Group'] == 'AD') |
                         (fmri_df['Research Group'] == 'CN')]
@@ -69,22 +70,27 @@ class FMRIDataset(Dataset):
         self.labels = labels
         self.normalize = normalize
         if normalize:
-            self.normalize_dict = FMRIDataset._get_normalize_dict(fmri_scan_ids)
+            self.normalize_dict = self._get_normalize_dict(fmri_scan_ids)
         else:
             self.normalize_dict = None
 
         # gaussian 3d conv
         self.kernel_3d = kernel_3d
 
-        self.data_path = data_path or '/home/ai-prac/ai-practicum/fmri-data/torch-data/data/'
+        self.data_path = os.path.join(data_path or DEFAULT_DATA_PATH, "torch-data")
 
 
+    def scan_path(self, fmri_scan_id):
+        """
+        Returns the path to the scan data for a given scan ID.
+        """
 
-    @staticmethod
-    def _get_normalize_dict(fmri_scan_ids):
+        return os.path.join(self.data_path, "data", f'{fmri_scan_id}.pt')
+
+    def _get_normalize_dict(self, fmri_scan_ids):
         normalize_dict = dict()
         for fmri_scan_id in fmri_scan_ids:
-            x = torch.load(f'/home/ai-prac/ai-practicum/fmri-data/torch-data/data/{fmri_scan_id}.pt')
+            x = torch.load(self.scan_path(fmri_scan_id))
             normalize_dict[fmri_scan_id] = transforms.Normalize( torch.mean(x.float()), torch.std(x.float()) )
             x = normalize_dict[fmri_scan_id](x.float())            
         return normalize_dict
@@ -96,13 +102,11 @@ class FMRIDataset(Dataset):
         fmri_scan_id = self.fmri_scan_ids[fmri_scan_idx]
 
         if self.normalize == False:
-            x = torch.load(
-                f'{self.data_path}{fmri_scan_id}.pt')
+            x = torch.load(self.scan_path(fmri_scan_id))
             # x = get_FWHM_gaussian_blur(x, self.kernel_3d)
             y = self.labels[fmri_scan_id]
         else:
-            x = torch.load(
-                f'{self.data_path}{fmri_scan_id}.pt')
+            x = torch.load(self.scan_path(fmri_scan_id))
             norm_func = self.normalize_dict[fmri_scan_id]
             x = norm_func(x.float())
             y = self.labels[fmri_scan_id]
@@ -142,13 +146,13 @@ def get_constant_data() -> DataLoader:
 
     return data_loader
 
-def get_half_half(n: int)-> DataLoader:
+def get_half_half(n: int, data_path=None)-> DataLoader:
     """
     Returns a data set whose labels have `n` zeros and `n` ones.
     """
 
     # create the data summary
-    data_summary = DataSummary()
+    data_summary = DataSummary(data_path=data_path)
 
     # get the mapping from scan id to label
     label_map = data_summary._label_map
@@ -172,7 +176,7 @@ def get_half_half(n: int)-> DataLoader:
         assert (labels[scan_id] == 1), f'labels[{scan_id}] {labels[scan_id]} != 1'
 
     # create the data set
-    data_set = FMRIDataset(scan_ids, labels, normalize=False, kernel_3d=None)
+    data_set = FMRIDataset(scan_ids, labels, normalize=False, kernel_3d=None, data_path=data_path)
 
     # create the data loader
     data_loader = DataLoader(data_set, batch_size=16, shuffle=False)
