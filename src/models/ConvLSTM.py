@@ -16,17 +16,22 @@ from torchmetrics.classification import BinaryROC
 from matplotlib import pyplot as plt
 from models import ConvLSTM
 from utils import *
-from trainer import Trainer
+from runners import Trainer
+from data import get_constant_data
+from torchsummary import summary
 
-CHECKPOINT_PATH = "./joe_checkpoint_model.pt"
 
 
 def main(device):
     random.seed(123)
     batch_size = 3
     training_generator, test_generator = get_train_test_dataloader((0.8, 0.2), batch_size)
+    data = get_constant_data()
 
     model = ConvLSTM(conv_kernel = 3, pool_kernel = 2, input_dim = 192, output_dim = 192)
+    print(summary(model.to(0), (140, 48, 64, 64)))
+
+    exit()
     # model = ConvLSTM2(input_dim = 128, output_dim = 128)
     # model = ConvolutionOverfit()
 
@@ -37,12 +42,13 @@ def main(device):
     ce_loss = nn.CrossEntropyLoss()
 
     # trainer = Trainer( model = model, optimizer = adam_optimizer, loss_fn = ce_loss, gpu_id = 0, save_interval = 1, metric_interval = 1, train_data = training_generator, validation_data = test_generator)
-    trainer = Trainer( model = model, optimizer = adam_optimizer, loss_fn = ce_loss, gpu_id = 0, save_interval = 1, metric_interval = 1, train_data = test_generator)
+    # trainer = Trainer( model = model, optimizer = adam_optimizer, loss_fn = ce_loss, gpu_id = 0, save_interval = 1, metric_interval = 1, train_data = test_generator)
+    trainer = Trainer( model = model, optimizer = adam_optimizer, loss_fn = ce_loss, gpu_id = 0, save_interval = 1, metric_interval = 1, train_data = data)
 
     # assert False
     s = datetime.now()
     print('Starting Training')
-    num_epochs = 10
+    num_epochs = 100
     trainer.train(num_epochs)
     print('Finished Training')
     f = datetime.now()
