@@ -49,14 +49,15 @@ class ConvolutionOverfit(nn.Module):
         X = self.conv3d_4(X)
         # X = self.dropout(X)
         X = torch.reshape(X, (B, 140, 16, 1, 2, 2) )
-        X = torch.flatten(X, 2) # (B, 140, 16*1*2*2)     
+        X = torch.flatten(X, 1) # (B, 140, 16*1*2*2)     
         X = self.fc1(X)
         X = self.sigmoid(X)
         X = self.fc2(X)
         X = self.sigmoid(X)
         X = self.fc3(X)
         X = X[None, :]
-        assert (1, 2) == X.shape
+        X = X.reshape(-1, 2)
+        assert (B, 2) == X.shape, f"X.shape = {X.shape}"
         return X
 
 class Convolution2(nn.Module):

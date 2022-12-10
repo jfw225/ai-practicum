@@ -175,6 +175,6 @@ def get_half_half(n: int)-> DataLoader:
     data_set = FMRIDataset(scan_ids, labels, normalize=False, kernel_3d=None)
 
     # create the data loader
-    data_loader = DataLoader(data_set, batch_size=1, shuffle=False)
+    data_loader = DataLoader(data_set, batch_size=16, shuffle=False)
 
     return data_loader

@@ -133,12 +133,12 @@ class Trainer():
 
                 #assuming decision boundary to be 0.5
                 total += batch_labels.size(0)
-                num_correct += (torch.argmax(predicted_output) == batch_labels).sum().item()
+                num_correct += (torch.argmax(predicted_output, dim=1) == batch_labels).sum().item()
 
             loss = cumulative_loss/num_batches
             accuracy = num_correct/total
-            # print("\t\tpredicted_output: ", all_preds)
-            # print("\t\texpected_labels: ", all_labels)
+            print("\t\tpredicted_output: ", all_preds)
+            print("\t\texpected_labels: ", all_labels)
             print(f'\t\tLoss: {loss} = {cumulative_loss}/{num_batches}')
             print(f'\t\tAccuracy: {accuracy} = {num_correct}/{total}')
             if sv_roc:
