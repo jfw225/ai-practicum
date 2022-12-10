@@ -137,8 +137,8 @@ class Trainer():
 
             loss = cumulative_loss/num_batches
             accuracy = num_correct/total
-            print("\t\tpredicted_output: ", all_preds)
-            print("\t\texpected_labels: ", all_labels)
+            # print("\t\tpredicted_output: ", all_preds)
+            # print("\t\texpected_labels: ", all_labels)
             print(f'\t\tLoss: {loss} = {cumulative_loss}/{num_batches}')
             print(f'\t\tAccuracy: {accuracy} = {num_correct}/{total}')
             if sv_roc:

@@ -63,7 +63,7 @@ class DataSummary:
 
 class FMRIDataset(Dataset):
 
-    def __init__(self, fmri_scan_ids: list, labels: dict, normalize: bool, kernel_3d : torch.tensor):
+    def __init__(self, fmri_scan_ids: list, labels: dict, normalize: bool, kernel_3d : torch.tensor, data_path:str = None):
         assert (len(fmri_scan_ids) == len(labels)), f'len(fmri_scan_ids) {len(fmri_scan_ids)} != len(labels) {len(labels)}'
         self.fmri_scan_ids = fmri_scan_ids
         self.labels = labels
@@ -75,6 +75,10 @@ class FMRIDataset(Dataset):
 
         # gaussian 3d conv
         self.kernel_3d = kernel_3d
+
+        self.data_path = data_path or '/home/ai-prac/ai-practicum/fmri-data/torch-data/data/'
+
+
 
     @staticmethod
     def _get_normalize_dict(fmri_scan_ids):
@@ -93,17 +97,17 @@ class FMRIDataset(Dataset):
 
         if self.normalize == False:
             x = torch.load(
-                f'/home/ai-prac/ai-practicum/fmri-data/torch-data/data/{fmri_scan_id}.pt')
+                f'{self.data_path}{fmri_scan_id}.pt')
             # x = get_FWHM_gaussian_blur(x, self.kernel_3d)
             y = self.labels[fmri_scan_id]
         else:
             x = torch.load(
-                f'/home/ai-prac/ai-practicum/fmri-data/torch-data/data/{fmri_scan_id}.pt')
+                f'{self.data_path}{fmri_scan_id}.pt')
             norm_func = self.normalize_dict[fmri_scan_id]
             x = norm_func(x.float())
             y = self.labels[fmri_scan_id]
  
-        return x, y
+        return x.float(), y
 
 
 def get_constant_data() -> DataLoader:
@@ -132,6 +136,43 @@ def get_constant_data() -> DataLoader:
     
     # create the data set
     data_set= FMRIDataset(scan_ids, labels, normalize=False, kernel_3d=None)
+
+    # create the data loader
+    data_loader = DataLoader(data_set, batch_size=1, shuffle=False)
+
+    return data_loader
+
+def get_half_half(n: int)-> DataLoader:
+    """
+    Returns a data set whose labels have `n` zeros and `n` ones.
+    """
+
+    # create the data summary
+    data_summary = DataSummary()
+
+    # get the mapping from scan id to label
+    label_map = data_summary._label_map
+
+    # get the scan ids for n zeros and n ones
+    zero_scan_ids = [scan_id for scan_id, label in label_map.items() if label == 0][:n]
+    one_scan_ids = [scan_id for scan_id, label in label_map.items() if label == 1][:n]
+
+    # concatenate the scan ids
+    scan_ids = zero_scan_ids + one_scan_ids
+
+    # get the labels
+    labels = {scan_id: data_summary.get_label(scan_id) for scan_id in scan_ids}
+
+    # ensure that each scan id in `zero_scan_ids` has a label of 0
+    for scan_id in zero_scan_ids:
+        assert (labels[scan_id] == 0), f'labels[{scan_id}] {labels[scan_id]} != 0'
+
+    # ensure that each scan id in `one_scan_ids` has a label of 1
+    for scan_id in one_scan_ids:
+        assert (labels[scan_id] == 1), f'labels[{scan_id}] {labels[scan_id]} != 1'
+
+    # create the data set
+    data_set = FMRIDataset(scan_ids, labels, normalize=False, kernel_3d=None)
 
     # create the data loader
     data_loader = DataLoader(data_set, batch_size=1, shuffle=False)

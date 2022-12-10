@@ -48,6 +48,7 @@ class ConvolutionOverfit(nn.Module):
         ### X = self.dropout(X)
         X = self.conv3d_4(X)
         # X = self.dropout(X)
+        # print(X.shape)
         X = torch.flatten(X) # full flatten (not-batched)
         X = self.fc1(X)
         X = self.sigmoid(X)
