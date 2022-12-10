@@ -64,13 +64,20 @@ class ConvolutionOverfit3D(nn.Module):
     def __init__(self):
         super().__init__()
         # super(ConvolutionOverfit, self).__init__()
-        self.conv3d_1 = nn.Conv3d(1, 8, (7,7,7), stride = 2)
-        self.conv3d_2 = nn.Conv3d(8, 16, (5,5,5), stride = 2)
-        self.conv3d_3 = nn.Conv3d(16, 32, (3,3,3), stride = 2)
-        self.conv3d_4 = nn.Conv3d(32, 16, (3,3,3), stride = 2)
-        self.fc1 = nn.Linear(1*64, 32)
+        # self.mp_1 = nn.MaxPool3d((2,2,2))
+        self.mp = nn.MaxPool3d((2, 2, 2), stride=(2, 2, 2))
+
+        # GOOD CODING
+        stride = 1
+        self.conv3d_1 = nn.Conv3d(1, 8, (7,7,7), stride =stride)
+        self.conv3d_2 = nn.Conv3d(8, 16, (5,5,5), stride =stride)
+        self.conv3d_3 = nn.Conv3d(16, 32, (3,3,3), stride =stride)
+        self.conv3d_4 = nn.Conv3d(32, 16, (3,3,3), stride =stride)
+
+        self.fc1 = nn.Linear(2400, 32)
         self.fc2 = nn.Linear(32, 16)
         self.fc3 = nn.Linear(16, 2)
+        self.fc4 = nn.Linear(2400, 1)
 
         self.reshape = nn.Flatten(0, 1)
         self.flatten = nn.Flatten()
@@ -80,34 +87,48 @@ class ConvolutionOverfit3D(nn.Module):
 
     def forward(self, input_tensor):
         (B, num_slides, num_slices, h, w) = input_tensor.shape
-        print(input_tensor.shape)
         # X = self.reshape(input_tensor)
         # X = X[:, None, :, :, :]
         X = input_tensor[:, -1, :, :, :]
         X = X[:, None, :, :, :]
-        print(X.shape)
 
         X = self.conv3d_1(X)
         X = self.relu(X)
+        X = self.mp(X)
+
         X = self.conv3d_2(X)
         X = self.relu(X)
+        X = self.mp(X)
+
         # X = self.dropout(X)
         X = self.conv3d_3(X)
         X = self.relu(X)
+        X = self.mp(X)
+
         ### X = self.dropout(X)
-        X = self.conv3d_4(X)
+        # X = self.conv3d_4(X)
+        # X = self.relu(X)
+        # X = self.mp(X)
+
         # X = self.dropout(X)
-        X = torch.reshape(X, (B, 1, 16, 1, 2, 2) )
-        X = torch.flatten(X, 1) # (B, 140, 16*1*2*2)     
-        X = self.fc1(X)
-        X = self.sigmoid(X)
-        X = self.fc2(X)
-        X = self.sigmoid(X)
-        X = self.fc3(X)
-        X = X[None, :]
-        X = X.reshape(-1, 2)
-        assert (B, 2) == X.shape, f"X.shape = {X.shape}"
-        return X
+        # X = torch.reshape(X, (B, 1, 16, 1, 2, 2) )
+        # X = torch.flatten(X, 1) # (B, 140, 16*1*2*2)     
+        X = torch.reshape(X, (B, -1))
+        # X = self.fc1(X)
+        # X = self.sigmoid(X)
+        # X = self.fc2(X)
+        # X = self.sigmoid(X)
+        # X = self.fc3(X)
+        # X = self.sigmoid(X)
+
+
+        X = self.fc4(X)
+        X= self.sigmoid(X)
+
+        # X = X[None, :]
+        # X = X.reshape(B, 1)
+        assert (B, 1) == X.shape, f"X.shape = {X.shape}"
+        return X.flatten()
 
 
 class Convolution2(nn.Module):

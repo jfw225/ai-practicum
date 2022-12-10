@@ -28,9 +28,9 @@ def main(device):
     batch_size = 3
     # training_generator, test_generator = get_train_test_dataloader((0.8, 0.2), batch_size)
     # data = get_constant_data()
-    data = get_half_half(16, VAYNE_PATH)
-    model = ConvLSTM(conv_kernel = 3, pool_kernel = 2, input_dim = 192, output_dim = 192)
-    # model = ConvolutionOverfit3D()
+    data = get_half_half(8, VAYNE_PATH)
+    # model = ConvLSTM(conv_kernel = 3, pool_kernel = 2, input_dim = 192, output_dim = 192)
+    model = ConvolutionOverfit3D()
     # summary(model.to(0), (1,140, 48, 64, 64))
 
     # model = ConvLSTM2(input_dim = 128, output_dim = 128)
@@ -38,13 +38,18 @@ def main(device):
 
 
     # adam_optimizer = torch.optim.Adam(model.parameters(), lr=0.001, weight_decay = 0.0001)
-    adam_optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
+    adam_optimizer = torch.optim.Adam(model.parameters(), lr=0.0001)
+    # sug = torch.optim.SGD(model.parameters(), lr=0.0001)
 
-    ce_loss = nn.CrossEntropyLoss()
+    # ce_loss = nn.CrossEntropyLoss()
+    bce_loss = nn.BCELoss()
+
+
 
     # trainer = Trainer( model = model, optimizer = adam_optimizer, loss_fn = ce_loss, gpu_id = 0, save_interval = 1, metric_interval = 1, train_data = training_generator, validation_data = test_generator)
     # trainer = Trainer( model = model, optimizer = adam_optimizer, loss_fn = ce_loss, gpu_id = 0, save_interval = 1, metric_interval = 1, train_data = test_generator)
-    trainer = Trainer( model = model, optimizer = adam_optimizer, loss_fn = ce_loss, gpu_id = 0, save_interval = 1, metric_interval = 1, train_data = data)
+    # trainer = Trainer( model = model, optimizer = sug, loss_fn = ce_loss, gpu_id = 0, save_interval = 1, metric_interval = 1, train_data = data)
+    trainer = Trainer( model = model, optimizer = adam_optimizer, loss_fn = bce_loss, gpu_id = 0, save_interval = 1, metric_interval = 1, train_data = data)
 
     # assert False
     s = datetime.now()

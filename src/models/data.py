@@ -174,11 +174,11 @@ def get_half_half(n: int, data_path=None)-> DataLoader:
     # ensure that each scan id in `one_scan_ids` has a label of 1
     for scan_id in one_scan_ids:
         assert (labels[scan_id] == 1), f'labels[{scan_id}] {labels[scan_id]} != 1'
-
+    
     # create the data set
     data_set = FMRIDataset(scan_ids, labels, normalize=False, kernel_3d=None, data_path=data_path)
 
     # create the data loader
-    data_loader = DataLoader(data_set, batch_size=16, shuffle=False)
+    data_loader = DataLoader(data_set, batch_size=1, shuffle=False)
 
     return data_loader

@@ -44,7 +44,8 @@ class Trainer():
     def _run_batch(self, batch_tensor: torch.tensor, batch_labels: torch.tensor):
         self.optimizer.zero_grad()
         predicted_output = self.model(batch_tensor)
-        loss = self.loss_fn(predicted_output, batch_labels)
+        # times 1.0 is to cast to float
+        loss = self.loss_fn(predicted_output,  batch_labels * 1.0)
         loss.backward()
         self.optimizer.step()
 
@@ -122,7 +123,9 @@ class Trainer():
                 # check batch labels type
                 batch_labels = batch_labels.to(self.gpu_id)
                 predicted_output = self.model(batch_tensor)
-                cumulative_loss += self.loss_fn(predicted_output, batch_labels)
+
+                # times 1.0 is to cast to float
+                cumulative_loss += self.loss_fn(predicted_output, batch_labels * 1.0)
 
                 if sv_roc:
                     all_preds = torch.cat( (all_preds, (softmax(predicted_output)[:,1])) )
@@ -130,17 +133,18 @@ class Trainer():
 
                 else:
                     # add the predicted output to the list of all predictions
-                    all_preds.append([*predicted_output])
+                    all_preds.append(predicted_output.cpu())
                     all_labels.append(batch_labels)
 
                 #assuming decision boundary to be 0.5
                 total += batch_labels.size(0)
-                num_correct += (torch.argmax(predicted_output, dim=1) == batch_labels).sum().item()
+                # num_correct += (torch.argmax(predicted_output, dim=1) == batch_labels).sum().item()
+                num_correct += (torch.round(predicted_output) == batch_labels).sum().item()
 
             loss = cumulative_loss/num_batches
             accuracy = num_correct/total
-            # print("\t\tpredicted_output: ", all_preds)
-            # print("\t\texpected_labels: ", all_labels)
+            print("\t\tpredicted_output: ", np.array(all_preds))
+            print("\t\texpected_labels: ", all_labels)
             print(f'\t\tLoss: {loss} = {cumulative_loss}/{num_batches}')
             print(f'\t\tAccuracy: {accuracy} = {num_correct}/{total}')
             if sv_roc:
@@ -195,7 +199,9 @@ class Tester:
                 # check batch labels type
                 batch_labels = batch_labels.to(self.gpu_id)
                 predicted_output = self.model(batch_tensor)
-                cumulative_loss += self.loss_fn(predicted_output, batch_labels)
+
+                # times 1.0 is to cast to float
+                cumulative_loss += self.loss_fn(predicted_output, batch_labels * 1.0)
                 if sv_roc:
                     softmax = nn.Softmax(dim = 1)
                     all_preds = torch.cat( (all_preds, (softmax(predicted_output)[:,1])) )
