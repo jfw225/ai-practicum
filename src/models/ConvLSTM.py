@@ -18,7 +18,7 @@ from models import ConvLSTM
 from utils import *
 from runners import Trainer
 from data import get_constant_data
-from torchsummary import summary
+from torchinfo import summary
 
 
 
@@ -29,7 +29,7 @@ def main(device):
     data = get_constant_data()
 
     model = ConvLSTM(conv_kernel = 3, pool_kernel = 2, input_dim = 192, output_dim = 192)
-    print(summary(model.to(0), (140, 48, 64, 64)))
+    summary(model.to(0), (1,140, 48, 64, 64))
 
     exit()
     # model = ConvLSTM2(input_dim = 128, output_dim = 128)
