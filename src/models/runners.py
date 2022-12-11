@@ -44,9 +44,9 @@ class Trainer():
     def _run_batch(self, batch_tensor: torch.tensor, batch_labels: torch.tensor):
         self.optimizer.zero_grad()
         predicted_output = self.model(batch_tensor)
-        # times 1.0 is to cast to float
-        # loss = self.loss_fn(predicted_output,  batch_labels * 1.0)
-        loss = self.loss_fn(predicted_output,  batch_labels)
+        # print(predicted_output)
+        # print(batch_labels)
+        loss = self.loss_fn(predicted_output, batch_labels.long())
         loss.backward()
         self.optimizer.step()
 
@@ -69,26 +69,6 @@ class Trainer():
         print(f'\tModel Saved at Epoch {epoch}')
 
     def train(self, num_epochs: int, sv_roc: bool = False):
-        # output_last = self.metric_interval < 1 or num_epochs % self.metric_interval != 0
-
-        # output last if interval is less than 1 always
-        # output last if num_epochs % self.metric_interval != 0
-
-        # for epoch in range(1, num_epochs + 1):
-        #     self._run_epoch(epoch)
-        #     if self.save_interval > 0 and epoch % self.save_interval == 0:
-        #         self._save_checkpoint(epoch)
-        #     elif epoch == num_epochs:
-        #         self._save_checkpoint(epoch)
-
-        #     if self.metric_interval > 0 and epoch % self.metric_interval == 0:
-        #         self.evaluate(self.train_data, sv_roc = True)
-        #         self.evaluate(self.validation_data)
-
-        # if output_last:
-        #     self.evaluate(self.train_data, sv_roc = True)
-        #     if self.validation_data != None:
-        #         self.evaluate(self.validation_data)
 
         for epoch in range(1, num_epochs + 1):
             self._run_epoch(epoch)
@@ -117,17 +97,19 @@ class Trainer():
             total = 0
             num_batches = len(dataloader)
             all_preds = []  # torch.tensor([]).to(self.gpu_id)
+            all_preds2 = []
+            all_preds3 = []
+            all_preds4 = []
             all_labels = []  # torch.tensor([]).to(self.gpu_id)
 
             for batch_tensor, batch_labels in dataloader:
                 batch_tensor = batch_tensor.to(self.gpu_id)
                 # check batch labels type
-                batch_labels = batch_labels.to(self.gpu_id)
+                batch_labels = batch_labels.to(self.gpu_id).long()
                 predicted_output = self.model(batch_tensor)
 
                 # times 1.0 is to cast to float
-                cumulative_loss += self.loss_fn(predicted_output,
-                                                batch_labels * 1.0)
+                cumulative_loss += self.loss_fn(predicted_output, batch_labels)
 
                 if sv_roc:
                     all_preds = torch.cat(
@@ -136,23 +118,50 @@ class Trainer():
 
                 else:
                     # add the predicted output to the list of all predictions
-                    all_preds += predicted_output.cpu().tolist()
+
+                    # all_preds += predicted_output.cpu().tolist()
+                    all_preds += ((torch.softmax(predicted_output,
+                                  dim=1)[:, 0])).cpu().tolist()
+
+                    all_preds2 += ((torch.softmax(predicted_output,
+                                   dim=1)[:, 1])).cpu().tolist()
+
+                    # all_preds2 += (torch.amax(predicted_output,
+                    #                dim=1)).cpu().tolist()
+
+                    # all_preds3 += (torch.amin(predicted_output,
+                    #                dim=1)).cpu().tolist()
+
+                    all_preds3 += (predicted_output[:, 0]).cpu().tolist()
+
+                    all_preds4 += (predicted_output[:, 1]).cpu().tolist()
+
+                    # all_preds += (torch.softmax(predicted_output,
+                    #               dim=1)).cpu().tolist()
+
                     all_labels += batch_labels.cpu().tolist()
 
                 # assuming decision boundary to be 0.5
                 total += batch_labels.size(0)
-                # num_correct += (torch.argmax(predicted_output, dim=1) == batch_labels).sum().item()
-                num_correct += (torch.round(predicted_output)
-                                == batch_labels).sum().item()
+                num_correct += (torch.argmax(predicted_output,
+                                dim=1) == batch_labels).sum().item()
+                # num_correct += (torch.round(predicted_output)
+                #                 == batch_labels).sum().item()
 
             loss = cumulative_loss/num_batches
             accuracy = num_correct/total
 
+            # print(all_preds)
+            # print(all_labels)
+
             d = {'predicted_output': all_preds,
+                 'predicted_output2': all_preds2,
+                 'predicted_output3': all_preds3,
+                 'predicted_output4': all_preds4,
                  'expected_labels': all_labels}
             df = pd.DataFrame.from_dict(d, orient='index')
             print(f'\t\t{df.to_string(header=False)}'.replace(
-                'expected_labels', '\t\texpected_labels'))
+                'expected_labels', '\t\texpected_labels').replace('predicted_output2', '\t\tpredicted_output2').replace('predicted_output3', '\t\tpredicted_output3').replace('predicted_output4', '\t\tpredicted_output4'))
 
             print(f'\t\tLoss: {loss} = {cumulative_loss}/{num_batches}')
             print(f'\t\tAccuracy: {accuracy} = {num_correct}/{total}')
@@ -162,7 +171,7 @@ class Trainer():
 
         self.model.train()
 
-    @staticmethod
+    @ staticmethod
     def save_roc(all_preds, all_labels):
         # print(all_preds)
         # print(all_labels)
