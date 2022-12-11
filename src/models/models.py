@@ -4,7 +4,7 @@ from torch import nn
 import torch.nn.functional as F
 from torch.utils.data import Dataset, DataLoader
 from torchvision import transforms
-import os 
+import os
 import pandas as pd
 import pickle
 import random
@@ -19,10 +19,10 @@ from matplotlib import pyplot as plt
 class ConvolutionOverfit(nn.Module):
     def __init__(self):
         super(ConvolutionOverfit, self).__init__()
-        self.conv3d_1 = nn.Conv3d(1, 8, (7,7,7), stride = 2)
-        self.conv3d_2 = nn.Conv3d(8, 16, (5,5,5), stride = 2)
-        self.conv3d_3 = nn.Conv3d(16, 32, (3,3,3), stride = 2)
-        self.conv3d_4 = nn.Conv3d(32, 16, (3,3,3), stride = 2)
+        self.conv3d_1 = nn.Conv3d(1, 8, (7, 7, 7), stride=2)
+        self.conv3d_2 = nn.Conv3d(8, 16, (5, 5, 5), stride=2)
+        self.conv3d_3 = nn.Conv3d(16, 32, (3, 3, 3), stride=2)
+        self.conv3d_4 = nn.Conv3d(32, 16, (3, 3, 3), stride=2)
         self.fc1 = nn.Linear(140*64, 128)
         self.fc2 = nn.Linear(128, 64)
         self.fc3 = nn.Linear(64, 2)
@@ -48,8 +48,8 @@ class ConvolutionOverfit(nn.Module):
         ### X = self.dropout(X)
         X = self.conv3d_4(X)
         # X = self.dropout(X)
-        X = torch.reshape(X, (B, 140, 16, 1, 2, 2) )
-        X = torch.flatten(X, 1) # (B, 140, 16*1*2*2)     
+        X = torch.reshape(X, (B, 140, 16, 1, 2, 2))
+        X = torch.flatten(X, 1)  # (B, 140, 16*1*2*2)
         X = self.fc1(X)
         X = self.sigmoid(X)
         X = self.fc2(X)
@@ -60,6 +60,7 @@ class ConvolutionOverfit(nn.Module):
         assert (B, 2) == X.shape, f"X.shape = {X.shape}"
         return X
 
+
 class ConvolutionOverfit3D(nn.Module):
     def __init__(self):
         super().__init__()
@@ -69,10 +70,10 @@ class ConvolutionOverfit3D(nn.Module):
 
         # GOOD CODING
         stride = 1
-        self.conv3d_1 = nn.Conv3d(1, 8, (7,7,7), stride =stride)
-        self.conv3d_2 = nn.Conv3d(8, 16, (5,5,5), stride =stride)
-        self.conv3d_3 = nn.Conv3d(16, 32, (3,3,3), stride =stride)
-        self.conv3d_4 = nn.Conv3d(32, 16, (3,3,3), stride =stride)
+        self.conv3d_1 = nn.Conv3d(1, 8, (7, 7, 7), stride=stride)
+        self.conv3d_2 = nn.Conv3d(8, 16, (5, 5, 5), stride=stride)
+        self.conv3d_3 = nn.Conv3d(16, 32, (3, 3, 3), stride=stride)
+        self.conv3d_4 = nn.Conv3d(32, 16, (3, 3, 3), stride=stride)
 
         self.fc1 = nn.Linear(2400, 32)
         self.fc2 = nn.Linear(32, 16)
@@ -112,7 +113,7 @@ class ConvolutionOverfit3D(nn.Module):
 
         # X = self.dropout(X)
         # X = torch.reshape(X, (B, 1, 16, 1, 2, 2) )
-        # X = torch.flatten(X, 1) # (B, 140, 16*1*2*2)     
+        # X = torch.flatten(X, 1) # (B, 140, 16*1*2*2)
         X = torch.reshape(X, (B, -1))
         # X = self.fc1(X)
         # X = self.sigmoid(X)
@@ -121,9 +122,8 @@ class ConvolutionOverfit3D(nn.Module):
         # X = self.fc3(X)
         # X = self.sigmoid(X)
 
-
         X = self.fc4(X)
-        X= self.sigmoid(X)
+        X = self.sigmoid(X)
 
         # X = X[None, :]
         # X = X.reshape(B, 1)
@@ -134,9 +134,9 @@ class ConvolutionOverfit3D(nn.Module):
 class Convolution2(nn.Module):
     def __init__(self):
         super(Convolution2, self).__init__()
-        self.conv3d_1 = nn.Conv3d(1, 8, (7,7,7), stride = 2)
-        self.conv3d_2 = nn.Conv3d(8, 16, (5,5,5), stride = 2)
-        self.conv3d_3 = nn.Conv3d(16, 32, (3,3,3), stride = 2)
+        self.conv3d_1 = nn.Conv3d(1, 8, (7, 7, 7), stride=2)
+        self.conv3d_2 = nn.Conv3d(8, 16, (5, 5, 5), stride=2)
+        self.conv3d_3 = nn.Conv3d(16, 32, (3, 3, 3), stride=2)
         self.fc1 = nn.Linear(4608, 128)
 
         self.reshape = nn.Flatten(0, 1)
@@ -165,6 +165,7 @@ class Convolution2(nn.Module):
         assert (B*num_slides, 128) == X.shape
         X = torch.reshape(X, (B, num_slides, 128))
         return X
+
 
 class Convolution(nn.Module):
     def __init__(self, conv_kernel, pool_kernel):
@@ -197,8 +198,8 @@ class Convolution(nn.Module):
         # self.batchnorm_5 = nn.BatchNorm3d(256)
         # self.cov3d_6 = nn.Conv3d(256, 256, conv_kernel)
         # self.pooling3d_3 = nn.MaxPool3d(pool_kernel)
- 
-        self.flatten = nn.Flatten() # batch flatten
+
+        self.flatten = nn.Flatten()  # batch flatten
         self.dropout = nn.Dropout(0.5)
         self.fc1 = nn.Linear(576, 192)
         # self.fc1 = nn.Linear(512, 256)
@@ -214,12 +215,12 @@ class Convolution(nn.Module):
         # print(f'3: {X.shape}')
         # print(X.dtype)
 
-        X = self.cov3d_1(X.float())
+        X = self.cov3d_1(X)
+        # X = self.cov3d_1(X.float())
         # print(X.shape)
         ### X = self.batchnorm_1(X)
         X = self.relu(X)
         X = self.pooling3d_1(X)
-        
 
         # print(X.shape)
         X = self.cov3d_2(X)
@@ -264,14 +265,15 @@ class Convolution(nn.Module):
 
         return X
 
+
 class LSTM(nn.Module):
     def __init__(self, input_dim, output_dim):
         super(LSTM, self).__init__()
 
-        self.lstm = nn.LSTM(input_dim, output_dim, batch_first = True)
+        self.lstm = nn.LSTM(input_dim, output_dim, batch_first=True)
         self.fc = nn.Linear(output_dim, 2)
-        self.softmax = nn.Softmax(dim = 1)
-    
+        self.softmax = nn.Softmax(dim=1)
+
     def forward(self, input_tensor):
         # [B, 140, 192]
         output, (h_n, c_n) = self.lstm(input_tensor)
@@ -283,7 +285,8 @@ class LSTM(nn.Module):
         # preds = self.softmax(X)
         # print(preds)
         return X
-    
+
+
 class ConvLSTM(nn.Module):
     def __init__(self, conv_kernel, pool_kernel, input_dim, output_dim):
         super(ConvLSTM, self).__init__()
@@ -293,7 +296,7 @@ class ConvLSTM(nn.Module):
         self.output_dim = output_dim
         # self.dropout = nn.Dropout(0.2)
 
-        self.convolution = Convolution( conv_kernel, pool_kernel)
+        self.convolution = Convolution(conv_kernel, pool_kernel)
         self.lstm = LSTM(input_dim, output_dim)
 
     def forward(self, input_tensor):
@@ -303,6 +306,7 @@ class ConvLSTM(nn.Module):
         # print(X)
         X = self.lstm(X)
         return X
+
 
 class ConvLSTM2(nn.Module):
     def __init__(self, input_dim, output_dim):
