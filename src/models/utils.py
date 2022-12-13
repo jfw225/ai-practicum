@@ -28,13 +28,14 @@ def get_FWHM_gaussian_kernel(fwhm):
 
 
 def get_FWHM_gaussian_blur(t, kernel_3d):
-    # reshaped_t = t[:,None,:,:,:].float().to(0)
-    # reshaped_k = kernel_3d[None,None,:,:,:].to(0)
     reshaped_t = t[:, None, :, :, :].float()
     reshaped_k = kernel_3d[None, None, :, :, :]
+    # reshaped_t = t[:, None, :, :, :].float().to('cuda')
+    # reshaped_k = kernel_3d[None, None, :, :, :].to('cuda')
 
     # 7 = kernel_3d.shape[0]= len(k) = len(ts) = len(gauss)
 
-    vol_3d = F.conv3d(reshaped_t, reshaped_k, stride=1, padding=7 // 2)
+    vol_3d = F.conv3d(reshaped_t, reshaped_k, stride=1,
+                      padding=7 // 2)
 
     return torch.squeeze(vol_3d)

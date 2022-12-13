@@ -193,7 +193,7 @@ def train_test_split(split, subject_scans_dict):
     return train_scans, test_scans
 
 
-def get_train_test_dataset(split: tuple) -> Tuple[FMRIDataset, FMRIDataset]:
+def get_train_test_dataset(split: tuple, data_path=None) -> Tuple[FMRIDataset, FMRIDataset]:
     assert (sum(split) == 1)
     assert (len(split) == 2)
     # Create train and test split
@@ -220,9 +220,6 @@ def get_train_test_dataset(split: tuple) -> Tuple[FMRIDataset, FMRIDataset]:
     train_labels = {key: all_labels[key] for key in train_scans}
     test_labels = {key: all_labels[key] for key in test_scans}
 
-    kernel_3d = get_FWHM_gaussian_kernel(6)
-    assert (7 == kernel_3d.shape[0])
-
     #################
     # t = torch.rand((140,48,64,64))
 
@@ -242,19 +239,25 @@ def get_train_test_dataset(split: tuple) -> Tuple[FMRIDataset, FMRIDataset]:
     #################
 
     training_set = FMRIDataset(
-        train_scans, train_labels, normalize=False, kernel_3d=kernel_3d)
+        train_scans, train_labels, normalize=True, blur_fwhm=6, data_path=data_path)
+
     print(f'Num Train 0 (CN): {list(train_labels.values()).count(0)}')
     print(f'Num Train 1 (AD): {list(train_labels.values()).count(1)}')
+    print(f'Normalize: {True}')
+    print(f'FWHM: {6}')
 
     test_set = FMRIDataset(test_scans, test_labels,
-                           normalize=False, kernel_3d=kernel_3d)
+                           normalize=True, blur_fwhm=6, data_path=data_path)
+
     print(f'Num Test 0 (CN): {list(test_labels.values()).count(0)}')
     print(f'Num Test 1 (AD): {list(test_labels.values()).count(1)}')
+    print(f'Normalize: {True}')
+    print(f'FWHM: {6}')
 
     return training_set, test_set
 
 
-def get_train_test_dataloader(split: tuple, batch_size) -> Tuple[DataLoader, DataLoader]:
+def get_train_test_dataloader(split: tuple, batch_size, data_path=None) -> Tuple[DataLoader, DataLoader]:
     training_set, test_set = get_train_test_dataset(split)
 
     training_generator = DataLoader(

@@ -15,7 +15,16 @@ from torchmetrics import ROC
 from torchmetrics.classification import BinaryROC
 from matplotlib import pyplot as plt
 
-CHECKPOINT_PATH = "./checkpoints/joe_checkpoint_model.pt"
+# CHECKPOINT_PATH = "./checkpoints/joe_checkpoint_model.pt"
+# CHECKPOINT_PATH = "./checkpoints/model_1.pt"
+# CHECKPOINT_PATH = "./checkpoints/model_2.pt"
+# CHECKPOINT_PATH = "./checkpoints/model_3.pt"
+# CHECKPOINT_PATH = "./checkpoints/model_4.pt"
+
+# CHECKPOINT_PATH = "./checkpoints/model_5.pt"
+# CHECKPOINT_PATH = "./checkpoints/model_6.pt"
+# CHECKPOINT_PATH = "./checkpoints/model_7.pt"
+# CHECKPOINT_PATH = "./checkpoints/model_8.pt"
 
 
 class Trainer():
@@ -56,7 +65,7 @@ class Trainer():
         i = 1
         all = len(self.train_data)
         for batch_tensor, batch_labels in self.train_data:
-            # print(f'\t{i}/{len(self.train_data)}')
+            print(f'\t{i}/{len(self.train_data)}')
             i += 1
             batch_tensor = batch_tensor.to(self.gpu_id)
             # check batch labels type
@@ -79,12 +88,16 @@ class Trainer():
                 self._save_checkpoint(epoch)
 
             if self.metric_interval > 0 and epoch % self.metric_interval == 0:
+                print("\tTrain Metrics:")
                 self.evaluate(self.train_data, sv_roc=sv_roc)
                 if self.validation_data != None:
+                    print("\tTest Metrics:")
                     self.evaluate(self.validation_data)
             elif epoch == num_epochs:  # Evaluate final model
+                print("\tTrain Metrics:")
                 self.evaluate(self.train_data, sv_roc=sv_roc)
                 if self.validation_data != None:
+                    print("\tTest Metrics:")
                     self.evaluate(self.validation_data)
 
     def evaluate(self, dataloader: DataLoader, sv_roc=False):
@@ -120,28 +133,20 @@ class Trainer():
                     # add the predicted output to the list of all predictions
 
                     # all_preds += predicted_output.cpu().tolist()
-                    all_preds += ((torch.softmax(predicted_output,
-                                  dim=1)[:, 0])).cpu().tolist()
 
-                    all_preds2 += ((torch.softmax(predicted_output,
-                                   dim=1)[:, 1])).cpu().tolist()
+                    # all_preds += ((torch.softmax(predicted_output,
+                    #               dim=1)[:, 0])).cpu().tolist()
+                    # all_preds2 += ((torch.softmax(predicted_output,
+                    #                dim=1)[:, 1])).cpu().tolist()
 
-                    # all_preds2 += (torch.amax(predicted_output,
-                    #                dim=1)).cpu().tolist()
+                    # all_preds3 += (predicted_output[:, 0]).cpu().tolist()
+                    # all_preds4 += (predicted_output[:, 1]).cpu().tolist()
 
-                    # all_preds3 += (torch.amin(predicted_output,
-                    #                dim=1)).cpu().tolist()
+                    # all_labels += batch_labels.cpu().tolist()
 
-                    all_preds3 += (predicted_output[:, 0]).cpu().tolist()
+                    # assuming decision boundary to be 0.5
+                    pass
 
-                    all_preds4 += (predicted_output[:, 1]).cpu().tolist()
-
-                    # all_preds += (torch.softmax(predicted_output,
-                    #               dim=1)).cpu().tolist()
-
-                    all_labels += batch_labels.cpu().tolist()
-
-                # assuming decision boundary to be 0.5
                 total += batch_labels.size(0)
                 num_correct += (torch.argmax(predicted_output,
                                 dim=1) == batch_labels).sum().item()
@@ -154,17 +159,18 @@ class Trainer():
             # print(all_preds)
             # print(all_labels)
 
-            d = {'predicted_output': all_preds,
-                 'predicted_output2': all_preds2,
-                 'predicted_output3': all_preds3,
-                 'predicted_output4': all_preds4,
-                 'expected_labels': all_labels}
-            df = pd.DataFrame.from_dict(d, orient='index')
-            print(f'\t\t{df.to_string(header=False)}'.replace(
-                'expected_labels', '\t\texpected_labels').replace('predicted_output2', '\t\tpredicted_output2').replace('predicted_output3', '\t\tpredicted_output3').replace('predicted_output4', '\t\tpredicted_output4'))
+            # d = {'predicted_output': all_preds,
+            #      'predicted_output2': all_preds2,
+            #      'predicted_output3': all_preds3,
+            #      'predicted_output4': all_preds4,
+            #      'expected_labels': all_labels}
+            # df = pd.DataFrame.from_dict(d, orient='index')
+            # print(f'\t\t{df.to_string(header=False)}'.replace(
+            #     'expected_labels', '\t\texpected_labels').replace('predicted_output2', '\t\tpredicted_output2').replace('predicted_output3', '\t\tpredicted_output3').replace('predicted_output4', '\t\tpredicted_output4'))
 
             print(f'\t\tLoss: {loss} = {cumulative_loss}/{num_batches}')
             print(f'\t\tAccuracy: {accuracy} = {num_correct}/{total}')
+
             if sv_roc:
                 Trainer.save_roc(all_preds, all_labels)
             print()

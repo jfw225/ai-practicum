@@ -26,22 +26,36 @@ VAYNE_PATH = "/home/joe/ai-practicum/fmri-data/"
 
 def main(device):
     random.seed(123)
-    batch_size = 3
-    # training_generator, test_generator = get_train_test_dataloader(
-    #     (0.8, 0.2), batch_size)
+    os.environ['CUDA_VISIBLE_DEVICES'] = '3'
+    #  '3' -> GPU 1
+    #  '1' -> GPU 2
+    #  '0' -> GPU 3
+    #  '2' -> GPU 0
+
+    batch_size = 2
+    training_generator, test_generator = get_train_test_dataloader(
+        (0.8, 0.2), batch_size)
     # data = get_constant_data()
     # data = get_half_half(8, VAYNE_PATH)
-    data = get_half_half(8)
-    # model = ConvLSTM(conv_kernel = 3, pool_kernel = 2, input_dim = 192, output_dim = 192)
+    # data = get_half_half(8)
+    model = ConvLSTM(conv_kernel=3, pool_kernel=2,
+                     input_dim=192, output_dim=192)
     # model = ConvolutionOverfit3D()  # USE nn.BCELoss()
-    model = ConvolutionOverfit()  # USE nn.CrossEntropyLoss()
+    # model = ConvolutionOverfit()  # USE nn.CrossEntropyLoss()
+
+    print(f'Model Input Shape: ({batch_size}, 140, 48, 64, 64)')
+    summary(model, (batch_size, 140, 48, 64, 64))
+
     # summary(model.to(0), (1,140, 48, 64, 64))
 
     # model = ConvLSTM2(input_dim = 128, output_dim = 128)
     # model = ConvolutionOverfit()
 
-    # adam_optimizer = torch.optim.Adam(model.parameters(), lr=0.001, weight_decay = 0.0001)
-    adam_optimizer = torch.optim.Adam(model.parameters(), lr=0.0001)
+    # adam_optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
+    adam_optimizer = torch.optim.Adam(
+        model.parameters(), lr=0.0001, weight_decay=0.0001)
+    print("Opimizer: ")
+    print(adam_optimizer)
     # sug = torch.optim.SGD(model.parameters(), lr=0.0001)
 
     ce_loss = nn.CrossEntropyLoss()
@@ -50,13 +64,16 @@ def main(device):
     # trainer = Trainer( model = model, optimizer = adam_optimizer, loss_fn = ce_loss, gpu_id = 0, save_interval = 1, metric_interval = 1, train_data = training_generator, validation_data = test_generator)
     # trainer = Trainer( model = model, optimizer = adam_optimizer, loss_fn = ce_loss, gpu_id = 0, save_interval = 1, metric_interval = 1, train_data = test_generator)
     # trainer = Trainer( model = model, optimizer = sug, loss_fn = ce_loss, gpu_id = 0, save_interval = 1, metric_interval = 1, train_data = data)
-    trainer = Trainer(model=model, optimizer=adam_optimizer, loss_fn=ce_loss,
-                      gpu_id=0, save_interval=1, metric_interval=1, train_data=data)
+
+    # trainer = Trainer(model=model, optimizer=adam_optimizer, loss_fn=ce_loss,
+    #                   gpu_id=0, save_interval=1, metric_interval=1, train_data=data)
+    trainer = Trainer(model=model, optimizer=adam_optimizer, loss_fn=ce_loss, gpu_id='cuda', save_interval=10,
+                      metric_interval=10, train_data=training_generator, validation_data=test_generator)
 
     # assert False
     s = datetime.now()
     print('Starting Training')
-    num_epochs = 100
+    num_epochs = 1
     trainer.train(num_epochs)
     print('Finished Training')
     f = datetime.now()
