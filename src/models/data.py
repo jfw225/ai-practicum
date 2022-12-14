@@ -193,7 +193,7 @@ def train_test_split(split, subject_scans_dict):
     return train_scans, test_scans
 
 
-def get_train_test_dataset(split: tuple, data_path=None) -> Tuple[FMRIDataset, FMRIDataset]:
+def get_train_test_dataset(split: tuple, balance, data_path=None) -> Tuple[FMRIDataset, FMRIDataset]:
     assert (sum(split) == 1)
     assert (len(split) == 2)
     # Create train and test split
@@ -203,6 +203,10 @@ def get_train_test_dataset(split: tuple, data_path=None) -> Tuple[FMRIDataset, F
     # train_scans, test_scans = train_test_split(split, subject_scans_dict)
     train_scans, test_scans = sequential_train_test_split(
         split, subject_scans_dict)
+
+    if balance == True:
+        train_scans = prune_for_even_split(train_scans)
+        test_scans = prune_for_even_split(test_scans)
 
     # Find train and test labels
 
@@ -257,8 +261,8 @@ def get_train_test_dataset(split: tuple, data_path=None) -> Tuple[FMRIDataset, F
     return training_set, test_set
 
 
-def get_train_test_dataloader(split: tuple, batch_size, data_path=None) -> Tuple[DataLoader, DataLoader]:
-    training_set, test_set = get_train_test_dataset(split)
+def get_train_test_dataloader(split: tuple, batch_size, balance: bool, data_path=None) -> Tuple[DataLoader, DataLoader]:
+    training_set, test_set = get_train_test_dataset(split, balance)
 
     training_generator = DataLoader(
         training_set,
@@ -355,3 +359,59 @@ def get_half_half(n: int, data_path=None) -> DataLoader:
     data_loader = DataLoader(data_set, batch_size=4, shuffle=False)
 
     return data_loader
+
+
+def prune_for_even_split(scans):
+    """
+    Prunes a list of frmi scans to make it more balanced 
+    """
+
+    PATH = '/home/ai-prac/ai-practicum/fmri-data/torch-data'
+    subject_scans_dict = pickle.load(
+        open(f'{PATH}/subject-scans-dict.pickle', 'rb'))
+
+    # Find train and test labels
+
+    PATH = '/home/ai-prac/ai-practicum/fmri-data/'
+    fmri_df = pd.read_csv(f'{PATH}/fMRI_summary.csv')
+    fmri_df = fmri_df[fmri_df['Description'] == 'Resting State fMRI']
+    fmri_df = fmri_df[(fmri_df['Research Group'] == 'AD') |
+                      (fmri_df['Research Group'] == 'CN')]
+    keys = fmri_df["Image ID"].map(lambda x: f'I{x}')
+    str_label_to_int = {'CN': 0, 'AD': 1}
+
+    values = list(
+        map(lambda x: str_label_to_int[x], fmri_df["Research Group"]))
+    all_labels = dict(zip(keys, values))
+    labels = {key: all_labels[key] for key in scans}
+
+    assert 0 in list(labels.values())
+    assert 1 in list(labels.values())
+
+    ones_scans = []
+    zeros_scans = []
+    for key in labels:
+        if labels[key] == 0:
+            zeros_scans.append(key)
+        else:
+            ones_scans.append(key)
+
+    if len(zeros_scans) > len(ones_scans):
+        num_to_remove = len(zeros_scans) - len(ones_scans)
+        scans_to_remove = zeros_scans[:num_to_remove]
+        assert len(set(zeros_scans) - set(scans_to_remove)) == len(ones_scans)
+
+    elif len(zeros_scans) < len(ones_scans):
+        num_to_remove = len(ones_scans) - len(zeros_scans)
+        scans_to_remove = ones_scans[num_to_remove - 1:]
+        assert len(set(ones_scans) - set(scans_to_remove)) == len(zeros_scans)
+
+    for key in scans_to_remove:
+        del labels[key]
+
+    assert list(labels.values()).count(0) == list(labels.values()).count(1)
+
+    print(f'Num Zeros: {list(labels.values()).count(0)}')
+    print(f'Num Ones: {list(labels.values()).count(1)}')
+
+    return list(labels.keys())

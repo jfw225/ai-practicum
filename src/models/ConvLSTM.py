@@ -32,9 +32,10 @@ def main(device):
     #  '0' -> GPU 3
     #  '2' -> GPU 0
 
-    batch_size = 2
+    batch_size = 1
     training_generator, test_generator = get_train_test_dataloader(
-        (0.8, 0.2), batch_size)
+        (0.8, 0.2), batch_size, balance=True)
+
     # data = get_constant_data()
     # data = get_half_half(8, VAYNE_PATH)
     # data = get_half_half(8)
@@ -73,7 +74,7 @@ def main(device):
     # assert False
     s = datetime.now()
     print('Starting Training')
-    num_epochs = 1
+    num_epochs = 100
     trainer.train(num_epochs)
     print('Finished Training')
     f = datetime.now()
