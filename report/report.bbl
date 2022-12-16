@@ -1,3 +1,11 @@
 \begin{thebibliography}{}
 
+\bibitem[adn, 2022]{adni}
+ (2022).
+\newblock Adni mri acquisition.
+
+\bibitem[lab, 2022]{lab_handout}
+ (2022).
+\newblock Lab 4: Single-core and multi-core systems.
+
 \end{thebibliography}

@@ -125,7 +125,16 @@
 
 	The FMRI data used in this study was obtained from the Alzheimer's Disease Neuroimaging Initiative (ADNI) database. The ADNI is a large, multi-center study that aims to identify biomarkers of Alzheimer's disease using various neuroimaging techniques, including FMRI. The ADNI dataset includes a wide range of imaging and cognitive data from individuals with Alzheimer's disease, mild cognitive impairment, and healthy controls.
 
-	The FMRI data in the ADNI dataset was collected using a 3T MRI scanner and a standard blood-oxygen-level-dependent (BOLD) contrast. The data consists of fMRI time series data, which contains information about the spatial and temporal patterns of brain activity. The data was preprocessed to correct for motion artifacts and other sources of noise, and it was parcellated into regions of interest using a standard brain atlas. The resulting data was then used as input to the convolutional LSTM model for the prediction of Alzheimer's disease.
+	\begin{figure}[!ht]
+		\centering
+		\includegraphics[width=0.8\textwidth]{figures/scan.png}
+		\caption{Example Brain Scan -- A, B, and C are 2D cross-sections of the brain. D is the full 3D composition of the brain which is constituted by several 2D slices. Each A, B, C, and D are from the dataset. \textbf{*** fix citation}}
+		\label{fig:example_brain_scan}
+		
+		\citep*{lab_handout}
+	\end{figure}
+
+	The FMRI data in the ADNI dataset was collected using a 3T MRI scanner and a standard blood-oxygen-level-dependent (BOLD) contrast. The data consists of fMRI time series data, which contains information about the spatial and temporal patterns of brain activity. The data was preprocessed to correct for motion artifacts and other sources of noise, and it was parcellated into regions of interest using a standard brain atlas. The resulting data was then used as input to the convolutional LSTM model for the prediction of Alzheimer's disease (\citep*{adni}). 
 
 	\textbf{*** talk about structure of the data}
 
