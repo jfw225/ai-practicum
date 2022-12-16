@@ -1,13 +1,13 @@
 # Fdb version 3
-["bibtex report"] 1670899016 "report.aux" "report.bbl" "report" 1670899017
+["bibtex report"] 1671225867 "report.aux" "report.bbl" "report" 1671226796
   "./apalike.bst" 1670896393 24647 fc288d638b47d1c5f8e662f87e5a4da2 ""
   "references.bib" 1670896393 291 15684e25410de989a54bbcfb09909770 ""
-  "report.aux" 1670899017 2133 11e3d4d0f94faf3cf81c413637b2a33b "pdflatex"
+  "report.aux" 1671226796 2133 c11d30b2aaf94f6cbb3fd4ba3f1ead84 "pdflatex"
   (generated)
   "report.bbl"
   "report.blg"
-["pdflatex"] 1670899016 "/Users/whelajos/school/ai-practicum/report/report.tex" "report.pdf" "report" 1670899017
-  "/Users/whelajos/school/ai-practicum/report/report.tex" 1670899015 21238 964e814e6fdcb5a285639ad352c2d45b ""
+["pdflatex"] 1671226795 "/Users/whelajos/school/ai-practicum/report/report.tex" "report.pdf" "report" 1671226796
+  "/Users/whelajos/school/ai-practicum/report/report.tex" 1671226795 22654 26d19a1751e58fdb3338b1b19b64c181 ""
   "/usr/local/texlive/2022/texmf-dist/fonts/enc/dvips/base/8r.enc" 1165713224 4850 80dc9bab7f31fb78a000ccfed0e27cab ""
   "/usr/local/texlive/2022/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/local/texlive/2022/texmf-dist/fonts/tfm/adobe/times/ptmb8r.tfm" 1136768653 4524 6bce29db5bc272ba5f332261583fee9c ""
@@ -136,10 +136,10 @@
   "/usr/local/texlive/2022/texmf-var/web2c/pdftex/pdflatex.fmt" 1663806843 2826442 5d04918395172e48718177c258418455 ""
   "/usr/local/texlive/2022/texmf.cnf" 1647878952 577 209b46be99c9075fd74d4c0369380e8c ""
   "caption2.sty" 1670896393 15190 35c3352faab63b28086162350d49d218 ""
-  "report.aux" 1670899017 2133 11e3d4d0f94faf3cf81c413637b2a33b "pdflatex"
-  "report.bbl" 1670899016 49 0eba253fc001332e731e8aba3f23127b "bibtex report"
-  "report.out" 1670899017 1962 d18e83013bcb30f077a25fd7c7b21210 "pdflatex"
-  "report.tex" 1670899015 21238 964e814e6fdcb5a285639ad352c2d45b ""
+  "report.aux" 1671226796 2133 c11d30b2aaf94f6cbb3fd4ba3f1ead84 "pdflatex"
+  "report.bbl" 1671225867 49 0eba253fc001332e731e8aba3f23127b "bibtex report"
+  "report.out" 1671226796 1962 d18e83013bcb30f077a25fd7c7b21210 "pdflatex"
+  "report.tex" 1671226795 22654 26d19a1751e58fdb3338b1b19b64c181 ""
   "sbc-template.sty" 1670896393 5570 925e6df71377501a237447ceeadc95aa ""
   (generated)
   "report.aux"

@@ -127,6 +127,8 @@
 
 	The FMRI data in the ADNI dataset was collected using a 3T MRI scanner and a standard blood-oxygen-level-dependent (BOLD) contrast. The data consists of fMRI time series data, which contains information about the spatial and temporal patterns of brain activity. The data was preprocessed to correct for motion artifacts and other sources of noise, and it was parcellated into regions of interest using a standard brain atlas. The resulting data was then used as input to the convolutional LSTM model for the prediction of Alzheimer's disease.
 
+	\textbf{*** talk about structure of the data}
+
 	\section{Methodology}
 
 	In this section, we describe our methodology for using a convolutional LSTM neural network to predict Alzheimer's disease from FMRI data. We will first describe the FMRI data that was used in the study, and then we will describe the convolutional LSTM model that was trained on the data. Finally, we will describe the experimental setup and the evaluation metrics that were used to assess the performance of the model.
@@ -135,14 +137,20 @@
 
 	In this study, we aimed to use a convolutional LSTM neural network to predict Alzheimer's disease from FMRI data. However, there were several challenges and limitations that we encountered in the course of our work.
 
-	One of the main challenges was the availability of high-quality FMRI data for training and evaluating the model. FMRI data is typically collected in a controlled research setting, which can be time-consuming and costly. As a result, the amount of FMRI data available for research purposes is limited, and it can be difficult to obtain a large and diverse dataset for training and evaluating a machine learning model.
+	Our first goal was to train a model to overfit the data, which would allow us to evaluate the model's performance on a held-out test set. In addition, accomplishing this goal would confirm that our model architecture is actually able to learn the data.
 
-	Another challenge was the high dimensionality and complexity of the FMRI data. FMRI data contains spatial and temporal information, which makes it difficult to analyze and model using traditional machine learning methods. We addressed this challenge by using a convolutional LSTM neural network, which is specifically designed to handle spatial-temporal data.
+	We started with the convolutional LSTM model that was described in the original paper. However, we were unable to train the model to overfit the data, which was an extremely confusing problem. The train-test split that we chose was very simple, but we continued to see high training error. To debug this issue, we continued to decrease the size of the training set until there were only four samples: 2 with a label of 0 (cognitively normal) and 2 with a label of 1 (Alzheimer's disease). We were still unable to train the model to overfit the data, which was extremely frustrating. And in fact, we observed that the accuracy was constantly 0.5 due to the fact that the model would always predict every sample as either a 1 or a 0.
 
-	In addition to these challenges, there were also some limitations to our study. For example, our sample size was relatively small, which may have affected the generalizability of our results. Additionally, our study was performed on a single dataset, and further research is needed to confirm our findings on other datasets.
+	We further iterated over the problem by regressing the model architecture. More specifically, we removed the dropout, normalization, and other layers that introduced regularization in addition to the LSTM layer. From this, we 
+	were left with a simple convolutional neural network whose sole purpose was to overfit the data. Even with this simple model, we were still unable to improve the training accuracy. 
 
-	\textbf{**talk about our original challenges with finding a model to overfit the data, and how we addressed this by preprocessing the data}
+	We then decided to try a different approach and asked ourselves: what if the problem is not with the model, but with the complexity of the data? Taking this idea in stride, we began by stripping the fourth dimension of the data (time) and only using the spatial information. But even with this, we still could not train the model to overfit the data. We then generated a bunch of really simple fake data and tried to train the model to overfit that. And to our excitement, this worked! We were able to train the model to overfit the data, which confirmed that the problem was not with the model, but with the complexity of the data.
 
+	At this point, we went back and reread the prior literature and focused our attention toward preprocessing. We noticed that each of the prior research papers preprocessed their data, but they did not put much emphasis on this step. Our thought was that preprocessing would improve the test accuracy our model, but wouldn't have a significant impact on the training accuracy. But to our surprise, this was not the case. 
+	
+	After preprocessing the data, we were able to train the model to overfit the data, which was a huge relief.
+
+	\textbf{*** explain the specific preprocessing}
 	\section{Results}
 
 	In this section, we present the results of our study on using a convolutional LSTM neural network to predict Alzheimer's disease from FMRI data. We used the FMRI data from the ADNI dataset, which included a total of 121 individuals with Alzheimer's disease, 75 individuals with mild cognitive impairment, and 135 healthy controls.
