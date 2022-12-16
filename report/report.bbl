@@ -4,8 +4,11 @@
  (2022).
 \newblock Adni mri acquisition.
 
-\bibitem[lab, 2022]{lab_handout}
- (2022).
-\newblock Lab 4: Single-core and multi-core systems.
+\bibitem[Hassan et~al., 2016]{radiomic_texture_analysis}
+Hassan, I., Kotrotsou, A., Shojaee~Bakhtiari, A., Thomas, G., Weinberg, J.,
+  Kumar, J., Sawaya, R., Luedi, M., Zinn, P., and Colen, R. (2016).
+\newblock Radiomic texture analysis mapping predicts areas of true functional
+  mri activity.
+\newblock {\em Scientific Reports}, 6.
 
 \end{thebibliography}

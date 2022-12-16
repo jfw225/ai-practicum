@@ -128,15 +128,14 @@
 	\begin{figure}[!ht]
 		\centering
 		\includegraphics[width=0.8\textwidth]{figures/scan.png}
-		\caption{Example Brain Scan -- A, B, and C are 2D cross-sections of the brain. D is the full 3D composition of the brain which is constituted by several 2D slices. Each A, B, C, and D are from the dataset. \textbf{*** fix citation}}
+		\caption{Example Brain Scan -- A, B, and C are 2D cross-sections of the brain. D is the full 3D composition of the brain which is constituted by several 2D slices. Each A, B, C, and D are from the dataset.}
 		\label{fig:example_brain_scan}
-		
-		\citep*{lab_handout}
+		\citep*{radiomic_texture_analysis}
 	\end{figure}
 
-	The FMRI data in the ADNI dataset was collected using a 3T MRI scanner and a standard blood-oxygen-level-dependent (BOLD) contrast. The data consists of fMRI time series data, which contains information about the spatial and temporal patterns of brain activity. The data was preprocessed to correct for motion artifacts and other sources of noise, and it was parcellated into regions of interest using a standard brain atlas. The resulting data was then used as input to the convolutional LSTM model for the prediction of Alzheimer's disease (\citep*{adni}). 
 
-	\textbf{*** talk about structure of the data}
+
+	The FMRI data in the ADNI dataset was collected using a 3T MRI scanner and a standard blood-oxygen-level-dependent (BOLD) contrast (\citep*{adni}). The data consists of FMRI time series data, which contains information about the spatial and temporal patterns of brain activity. More specifically, each FMRI sample is a four dimensional object. At the most fundamental level, the first two dimensions represent a 2D grayscale cross-sectional image of the brain as seen in Figure \ref{fig:example_brain_scan} from patients A, B, and C. These 2D cross sections can then be stacked on top of each other to compose a full 3D image of the brain as seen in Figure \ref{fig:example_brain_scan} from Patient D. The fourth and final dimension is a series of these 3D brain scans over time. So overall, each of our samples contains 140 3D brain scans over time that are each constituted by stacking 48 2D cross sections of the brain which are each 64x64 pixels in size. More rigidly, each sample is a 4D tensor of size $[140, 48, 64, 64]$.
 
 	\section{Methodology}
 
@@ -146,7 +145,7 @@
 
 	In this study, we aimed to use a convolutional LSTM neural network to predict Alzheimer's disease from FMRI data. However, there were several challenges and limitations that we encountered in the course of our work.
 
-	Our first goal was to train a model to overfit the data, which would allow us to evaluate the model's performance on a held-out test set. In addition, accomplishing this goal would confirm that our model architecture is actually able to learn the data.
+	Our first goal was to train a model to overfit the data, which would allow us to evaluate the model's performance on a held-out test set. In addition, accomplishing this goal would confirm that our model architecture is actually able to learn our FMRI data.
 
 	We started with the convolutional LSTM model that was described in the original paper. However, we were unable to train the model to overfit the data, which was an extremely confusing problem. The train-test split that we chose was very simple, but we continued to see high training error. To debug this issue, we continued to decrease the size of the training set until there were only four samples: 2 with a label of 0 (cognitively normal) and 2 with a label of 1 (Alzheimer's disease). We were still unable to train the model to overfit the data, which was extremely frustrating. And in fact, we observed that the accuracy was constantly 0.5 due to the fact that the model would always predict every sample as either a 1 or a 0.
 
