@@ -107,10 +107,12 @@
 
 	There has been a growing interest in using AI techniques, such as machine learning and deep learning, for the early detection and classification of Alzheimer's disease. Previous studies have explored the use of various machine learning algorithms, including support vector machines, decision trees, and random forests, to predict Alzheimer's disease from various types of data, such as demographic information, cognitive test scores, and neuroimaging data.
 
-	Deep learning methods, such as convolutional neural networks, have also been applied to the prediction of Alzheimer's disease. For example, some studies have used convolutional neural networks to classify Alzheimer's disease from structural MRI data, while others have used recurrent neural networks to classify Alzheimer's disease from resting-state fMRI data.
+	Deep learning methods, such as convolutional neural networks (CNNs), have also been applied to the prediction of Alzheimer's disease. For example, \cite{2d-CNN} use a 2d CNN on the crossections of a 3d MRI scan to extract spatial features which they pass into a fully connected layer to diagnose AD. However this apporach limits the spatial learning to slices of the brain. \cite{3d-CNN} use a 3d CNN to fully capture 3d features scan to diagnose AD.  
+	
+	Some studies have also made use of recurrent neural networks (RNNs) to capture the temporal features of an fMRI scan. \cite{LSTM} track the activation levels of 90 regions of interest in the 3d scan over time. These 90 regions of intrest can be represented as a vector which was then passed sequentially into in LSTM, a type of RNN, to encode information about the sequence. This sequence encoding was then passed into a fully connected layer for classification of AD.  
 
-	Overall, the current literature suggests that AI techniques can be effective in predicting Alzheimer's disease from various types of data. In this study, we aim to contribute to this literature by exploring the use of a convolutional LSTM neural network for the prediction of Alzheimer's disease from FMRI data.
-
+	The majority of literature we found focuses heavily on the two previous deep learning methods. These techniques can be effective, however, they utilize spatial and temporal data independently. While we believed that it would make sense for a model to consider both spatial and temporal simultaneously, there is actually less research on the combined approach. One paper we did find, by \cite{Conv-LSTM}, uses a 3d convolutional layer extract the spatial embeddings of the brain at each timestep of the fMRI scan and then feed these embeddings sequentially into an LSTM. Since brains have a complex structure are not static this architecture seemed to be the most promising and was what we decided to reimplement for our project.
+	
 	\section{Overview of convolutional LSTM neural networks}
 
 	Convolutional LSTM neural networks are a type of deep learning model that combines the strengths of convolutional neural networks and long short-term memory (LSTM) networks. Convolutional neural networks are commonly used in image and video analysis, as they are able to capture spatial relationships in data. LSTM networks are a type of recurrent neural network that are able to capture temporal dependencies in data, making them effective in modeling sequential data.
@@ -129,7 +131,51 @@
 
 	\section{Methodology}
 
-	In this section, we describe our methodology for using a convolutional LSTM neural network to predict Alzheimer's disease from FMRI data. We will first describe the FMRI data that was used in the study, and then we will describe the convolutional LSTM model that was trained on the data. Finally, we will describe the experimental setup and the evaluation metrics that were used to assess the performance of the model.
+	While our main focus of the project was to train a convolutional LSTM classifier, we also implemented a 3d CNN for classification. This simple model takes im the final 3d scan from the 4d fmri and outputs a probability that this person has AD. The fundamental reason for making this model was to overfit to the training data to (1) verify that our data was in a form that would allow our model to learn, and (2) verify that the convolutional layer model has a sufficent representational capacity. Therefore, since we were only looking to overfit our CNN, we did not attempt tune the hyperparamaters of this model. 
+	
+	The model layers along with the corresponding tensor output shape at each layer are shown below (the number before the @ refers to the number of channels):
+		\begin{itemize}
+			\item input shape: (48, 64, 64)
+			\item convolution-1: 8 @ (42,58,58)
+			\item relu: 8 @ (42,58,58)
+			\item maxpool: 8 @ (21,29,29)
+			\item convolution-2: 16 @ (17,25,25)
+			\item relu: 16 @ (17,25,25)
+			\item maxpool: 16 @ (8,12,12)
+			\item convolution-3: 32 @ (6,10,10)
+			\item relu: 32 @ (6,10,10)
+			\item maxpool: 32 @ (3,5,5)
+			\item flatten: (2400)
+			\item fully connected layer: (1)
+			\item sigmoid: (1)
+		\end{itemize}
+		
+	The convolutional LSTM we built took in a tensor of shape 
+	(140, 48, 64, 64) and applied the following convolutional layer to each of the 140 3d frames in the fMRI scan:
+		\begin{itemize}
+			\item input shape: (48, 64, 64)
+			\item convolution-1: 8 @ (46, 62, 62)
+			\item relu: 8 @ (46, 62, 62)
+			\item maxpool: 8 @ (23, 31, 31)
+			\item convolution-2: 16 @ (21, 29, 29)
+			\item relu: 16 @ (21, 29, 29)
+			\item maxpool: 16 @ (10, 14, 14)
+			\item convolution-3: 32 @ (8, 12, 12)
+			\item relu: 32 @ (8, 12, 12)
+			\item convolution-4: 32 @ (6, 10, 10)
+			\item relu: 32 @ (6, 10, 10)
+			\item maxpool: 32 @ (3, 5, 5)
+			\item convolution-5: 64 @ (1, 3, 3)
+			\item relu: 64 @ (1, 3, 3)
+			\item flatten: (576)
+			\item dropout: (576)
+			\item fully connected layer: (192)
+	\end{itemize}
+
+	Then each vector of length 192 was passed sequentially into an LSTM whose final hidden layer was passed into a fully connected layer that output the probability that the person in the scan had Alzheimer's.
+
+	We trained both models using Adam optimizer and for our loss function used the cross entropy loss. 
+
 
 	\section{Challenges and limitations}
 
@@ -195,7 +241,7 @@
 
 	In future work, it would be interesting to explore the use of alternative deep learning models, such as transformer models, for the prediction of Alzheimer's disease from FMRI data. Additionally, it would be valuable to investigate the potential use of these models in clinical settings and to explore the potential use of other types of data, in addition to FMRI data, for the prediction of Alzheimer's disease. Overall, our study represents a step towards the use of AI techniques for the early detection and diagnosis of Alzheimer's disease, and further research is needed to confirm our findings and to explore the potential applications of convolutional LSTM neural networks in this area.
 
-    \bibliographystyle{apalike}
+  \bibliographystyle{apalike}
 	\bibliography{references}
 	
 \end{document}
