@@ -3,13 +3,10 @@
 \providecommand\zref@newlabel[2]{}
 \providecommand\HyperFirstAtBeginDocument{\AtBeginDocument}
 \HyperFirstAtBeginDocument{\ifx\hyper@anchor\@undefined
-\global\let\oldcontentsline\contentsline
-\gdef\contentsline#1#2#3#4{\oldcontentsline{#1}{#2}{#3}}
 \global\let\oldnewlabel\newlabel
 \gdef\newlabel#1#2{\newlabelxx{#1}#2}
 \gdef\newlabelxx#1#2#3#4#5#6{\oldnewlabel{#1}{{#2}{#3}}}
 \AtEndDocument{\ifx\hyper@anchor\@undefined
-\let\contentsline\oldcontentsline
 \let\newlabel\oldnewlabel
 \fi}
 \fi}
@@ -20,25 +17,32 @@
 \AC@reset@newl@bel
 \@writefile{toc}{\contentsline {section}{\numberline {1}Introduction}{1}{section.1}\protected@file@percent }
 \@writefile{toc}{\contentsline {section}{\numberline {2}Background on Alzheimer's Disease}{1}{section.2}\protected@file@percent }
+\citation{2d-CNN}
+\citation{3d-CNN}
+\citation{LSTM}
+\citation{Conv-LSTM}
 \@writefile{toc}{\contentsline {section}{\numberline {3}Current Literature on Using AI for Alzheimer's Disease Classification}{2}{section.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {4}Overview of Convolutional LSTM Neural Networks}{2}{section.4}\protected@file@percent }
 \citation{radiomic_texture_analysis}
 \citation{adni}
-\@writefile{toc}{\contentsline {section}{\numberline {5}FMRI Data: Source and Structure}{3}{section.5}\protected@file@percent }
-\newlabel{sec:data}{{5}{3}{FMRI Data: Source and Structure}{section.5}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {4}FMRI Data: Source and Structure}{3}{section.4}\protected@file@percent }
+\newlabel{sec:data}{{4}{3}{FMRI Data: Source and Structure}{section.4}{}}
 \@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Example Brain Scan -- A, B, and C are 2D cross-sections of the brain. D is the full 3D composition of the brain which is constituted by several 2D slices. Each A, B, C, and D are from the dataset.}}{3}{figure.1}\protected@file@percent }
 \newlabel{fig:example_brain_scan}{{1}{3}{Example Brain Scan -- A, B, and C are 2D cross-sections of the brain. D is the full 3D composition of the brain which is constituted by several 2D slices. Each A, B, C, and D are from the dataset}{figure.1}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {6}Methodology}{4}{section.6}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {7}Challenges}{4}{section.7}\protected@file@percent }
-\newlabel{sec:challenges}{{7}{4}{Challenges}{section.7}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {8}Results}{5}{section.8}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces Model results when varying the FWHM blur, dropout, and weight decay.}}{5}{table.1}\protected@file@percent }
-\newlabel{tab:performance}{{1}{5}{Model results when varying the FWHM blur, dropout, and weight decay}{table.1}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {9}Discussion}{6}{section.9}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {10}Limitations and Future Work}{6}{section.10}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {11}Conclusion}{7}{section.11}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {5}Methodology}{4}{section.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {6}Challenges}{5}{section.6}\protected@file@percent }
+\newlabel{sec:challenges}{{6}{5}{Challenges}{section.6}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {7}Results}{6}{section.7}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces Model results when varying the FWHM blur, dropout, and weight decay.}}{6}{table.1}\protected@file@percent }
+\newlabel{tab:performance}{{1}{6}{Model results when varying the FWHM blur, dropout, and weight decay}{table.1}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {8}Discussion}{6}{section.8}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {9}Limitations and Future Work}{7}{section.9}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {10}Conclusion}{8}{section.10}\protected@file@percent }
 \bibstyle{apalike}
 \bibdata{references}
 \bibcite{adni}{{1}{2022}{{adn}}{{}}}
-\bibcite{radiomic_texture_analysis}{{2}{2016}{{Hassan et~al.}}{{}}}
-\gdef \@abspage@last{8}
+\bibcite{3d-CNN}{{2}{2020}{{Folego et~al.}}{{}}}
+\bibcite{radiomic_texture_analysis}{{3}{2016}{{Hassan et~al.}}{{}}}
+\bibcite{LSTM}{{4}{2022}{{Li et~al.}}{{}}}
+\bibcite{Conv-LSTM}{{5}{2020}{{Li et~al.}}{{}}}
+\bibcite{2d-CNN}{{6}{2021}{{Liang et~al.}}{{}}}
+\gdef \@abspage@last{9}
