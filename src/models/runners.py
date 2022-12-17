@@ -24,7 +24,12 @@ from matplotlib import pyplot as plt
 # CHECKPOINT_PATH = "./checkpoints/model_5.pt"
 # CHECKPOINT_PATH = "./checkpoints/model_6.pt"
 # CHECKPOINT_PATH = "./checkpoints/model_7.pt"
-CHECKPOINT_PATH = "./checkpoints/model_8.pt"
+# CHECKPOINT_PATH = "./checkpoints/model_8.pt"
+
+# CHECKPOINT_PATH = "./checkpoints/model_9.pt"
+# CHECKPOINT_PATH = "./checkpoints/model_10.pt"
+# CHECKPOINT_PATH = "./checkpoints/model_11.pt"
+# CHECKPOINT_PATH = "./checkpoints/model_12.pt"
 
 
 class Trainer():

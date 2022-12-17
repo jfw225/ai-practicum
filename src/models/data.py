@@ -241,22 +241,22 @@ def get_train_test_dataset(split: tuple, balance, data_path=None) -> Tuple[FMRID
 
     # assert False
     #################
-
+    fwhm = 0
     training_set = FMRIDataset(
-        train_scans, train_labels, normalize=True, blur_fwhm=6, data_path=data_path)
+        train_scans, train_labels, normalize=True, blur_fwhm=fwhm, data_path=data_path)
 
     print(f'Num Train 0 (CN): {list(train_labels.values()).count(0)}')
     print(f'Num Train 1 (AD): {list(train_labels.values()).count(1)}')
     print(f'Normalize: {True}')
-    print(f'FWHM: {6}')
+    print(f'FWHM: {fwhm}')
 
     test_set = FMRIDataset(test_scans, test_labels,
-                           normalize=True, blur_fwhm=6, data_path=data_path)
+                           normalize=True, blur_fwhm=fwhm, data_path=data_path)
 
     print(f'Num Test 0 (CN): {list(test_labels.values()).count(0)}')
     print(f'Num Test 1 (AD): {list(test_labels.values()).count(1)}')
     print(f'Normalize: {True}')
-    print(f'FWHM: {6}')
+    print(f'FWHM: {fwhm}')
 
     return training_set, test_set
 

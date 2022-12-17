@@ -1,0 +1,257 @@
+Num Zeros: 100
+Num Ones: 100
+Num Zeros: 16
+Num Ones: 16
+Num Train 0 (CN): 100
+Num Train 1 (AD): 100
+Normalize: True
+FWHM: 0
+Num Test 0 (CN): 16
+Num Test 1 (AD): 16
+Normalize: True
+FWHM: 0
+nn.Dropout(0.5)
+Model Input Shape: (2, 140, 48, 64, 64)
+==========================================================================================
+Layer (type:depth-idx)                   Output Shape              Param #
+==========================================================================================
+ConvLSTM                                 [2, 2]                    --
+├─Convolution: 1-1                       [2, 140, 192]             304
+│    └─Flatten: 2-1                      [280, 48, 64, 64]         --
+│    └─Conv3d: 2-2                       [280, 8, 46, 62, 62]      224
+│    └─ReLU: 2-3                         [280, 8, 46, 62, 62]      --
+│    └─MaxPool3d: 2-4                    [280, 8, 23, 31, 31]      --
+│    └─Conv3d: 2-5                       [280, 16, 21, 29, 29]     3,472
+│    └─ReLU: 2-6                         [280, 16, 21, 29, 29]     --
+│    └─MaxPool3d: 2-7                    [280, 16, 10, 14, 14]     --
+│    └─Conv3d: 2-8                       [280, 32, 8, 12, 12]      13,856
+│    └─ReLU: 2-9                         [280, 32, 8, 12, 12]      --
+│    └─Conv3d: 2-10                      [280, 32, 6, 10, 10]      27,680
+│    └─ReLU: 2-11                        [280, 32, 6, 10, 10]      --
+│    └─MaxPool3d: 2-12                   [280, 32, 3, 5, 5]        --
+│    └─Conv3d: 2-13                      [280, 64, 1, 3, 3]        55,360
+│    └─ReLU: 2-14                        [280, 64, 1, 3, 3]        --
+│    └─Flatten: 2-15                     [280, 576]                --
+│    └─Dropout: 2-16                     [280, 576]                --
+│    └─Linear: 2-17                      [280, 192]                110,784
+├─LSTM: 1-2                              [2, 2]                    --
+│    └─LSTM: 2-18                        [2, 140, 192]             296,448
+│    └─Linear: 2-19                      [2, 2]                    386
+==========================================================================================
+Total params: 508,514
+Trainable params: 508,514
+Non-trainable params: 0
+Total mult-adds (G): 37.63
+==========================================================================================
+Input size (MB): 220.20
+Forward/backward pass size (MB): 3929.39
+Params size (MB): 2.03
+Estimated Total Size (MB): 4151.62
+==========================================================================================
+Opimizer: 
+Adam (
+Parameter Group 0
+    amsgrad: False
+    betas: (0.9, 0.999)
+    capturable: False
+    differentiable: False
+    eps: 1e-08
+    foreach: None
+    fused: False
+    lr: 0.001
+    maximize: False
+    weight_decay: 0
+)
+Starting Training
+	[GPU cuda] Epoch 1
+	[GPU cuda] Epoch 2
+	[GPU cuda] Epoch 3
+	[GPU cuda] Epoch 4
+	[GPU cuda] Epoch 5
+	[GPU cuda] Epoch 6
+	[GPU cuda] Epoch 7
+	[GPU cuda] Epoch 8
+	[GPU cuda] Epoch 9
+	[GPU cuda] Epoch 10
+	Model Saved at Epoch 10
+	Train Metrics:
+		Loss: 0.6931478977203369 = 69.31478881835938/100
+		Accuracy: 0.5 = 100/200
+
+	Test Metrics:
+		Loss: 0.6931475400924683 = 22.180721282958984/32
+		Accuracy: 0.5 = 16/32
+
+	[GPU cuda] Epoch 11
+	[GPU cuda] Epoch 12
+	[GPU cuda] Epoch 13
+	[GPU cuda] Epoch 14
+	[GPU cuda] Epoch 15
+	[GPU cuda] Epoch 16
+	[GPU cuda] Epoch 17
+	[GPU cuda] Epoch 18
+	[GPU cuda] Epoch 19
+	[GPU cuda] Epoch 20
+	Model Saved at Epoch 20
+	Train Metrics:
+		Loss: 0.6931581497192383 = 69.3158187866211/100
+		Accuracy: 0.5 = 100/200
+
+	Test Metrics:
+		Loss: 0.6931582689285278 = 22.18106460571289/32
+		Accuracy: 0.5 = 16/32
+
+	[GPU cuda] Epoch 21
+	[GPU cuda] Epoch 22
+	[GPU cuda] Epoch 23
+	[GPU cuda] Epoch 24
+	[GPU cuda] Epoch 25
+	[GPU cuda] Epoch 26
+	[GPU cuda] Epoch 27
+	[GPU cuda] Epoch 28
+	[GPU cuda] Epoch 29
+	[GPU cuda] Epoch 30
+	Model Saved at Epoch 30
+	Train Metrics:
+		Loss: 0.693149983882904 = 69.31500244140625/100
+		Accuracy: 0.5 = 100/200
+
+	Test Metrics:
+		Loss: 0.693149745464325 = 22.1807918548584/32
+		Accuracy: 0.5 = 16/32
+
+	[GPU cuda] Epoch 31
+	[GPU cuda] Epoch 32
+	[GPU cuda] Epoch 33
+	[GPU cuda] Epoch 34
+	[GPU cuda] Epoch 35
+	[GPU cuda] Epoch 36
+	[GPU cuda] Epoch 37
+	[GPU cuda] Epoch 38
+	[GPU cuda] Epoch 39
+	[GPU cuda] Epoch 40
+	Model Saved at Epoch 40
+	Train Metrics:
+		Loss: 0.6931470632553101 = 69.31470489501953/100
+		Accuracy: 0.5 = 100/200
+
+	Test Metrics:
+		Loss: 0.6931471228599548 = 22.180707931518555/32
+		Accuracy: 0.5 = 16/32
+
+	[GPU cuda] Epoch 41
+	[GPU cuda] Epoch 42
+	[GPU cuda] Epoch 43
+	[GPU cuda] Epoch 44
+	[GPU cuda] Epoch 45
+	[GPU cuda] Epoch 46
+	[GPU cuda] Epoch 47
+	[GPU cuda] Epoch 48
+	[GPU cuda] Epoch 49
+	[GPU cuda] Epoch 50
+	Model Saved at Epoch 50
+	Train Metrics:
+		Loss: 0.6931470632553101 = 69.31470489501953/100
+		Accuracy: 0.5 = 100/200
+
+	Test Metrics:
+		Loss: 0.6931473612785339 = 22.180715560913086/32
+		Accuracy: 0.5 = 16/32
+
+	[GPU cuda] Epoch 51
+	[GPU cuda] Epoch 52
+	[GPU cuda] Epoch 53
+	[GPU cuda] Epoch 54
+	[GPU cuda] Epoch 55
+	[GPU cuda] Epoch 56
+	[GPU cuda] Epoch 57
+	[GPU cuda] Epoch 58
+	[GPU cuda] Epoch 59
+	[GPU cuda] Epoch 60
+	Model Saved at Epoch 60
+	Train Metrics:
+		Loss: 0.6931471228599548 = 69.31471252441406/100
+		Accuracy: 0.5 = 100/200
+
+	Test Metrics:
+		Loss: 0.6931473612785339 = 22.180715560913086/32
+		Accuracy: 0.5 = 16/32
+
+	[GPU cuda] Epoch 61
+	[GPU cuda] Epoch 62
+	[GPU cuda] Epoch 63
+	[GPU cuda] Epoch 64
+	[GPU cuda] Epoch 65
+	[GPU cuda] Epoch 66
+	[GPU cuda] Epoch 67
+	[GPU cuda] Epoch 68
+	[GPU cuda] Epoch 69
+	[GPU cuda] Epoch 70
+	Model Saved at Epoch 70
+	Train Metrics:
+		Loss: 0.6931512355804443 = 69.31512451171875/100
+		Accuracy: 0.5 = 100/200
+
+	Test Metrics:
+		Loss: 0.6931511759757996 = 22.180837631225586/32
+		Accuracy: 0.5 = 16/32
+
+	[GPU cuda] Epoch 71
+	[GPU cuda] Epoch 72
+	[GPU cuda] Epoch 73
+	[GPU cuda] Epoch 74
+	[GPU cuda] Epoch 75
+	[GPU cuda] Epoch 76
+	[GPU cuda] Epoch 77
+	[GPU cuda] Epoch 78
+	[GPU cuda] Epoch 79
+	[GPU cuda] Epoch 80
+	Model Saved at Epoch 80
+	Train Metrics:
+		Loss: 0.6931517720222473 = 69.31517791748047/100
+		Accuracy: 0.5 = 100/200
+
+	Test Metrics:
+		Loss: 0.6931514739990234 = 22.18084716796875/32
+		Accuracy: 0.5 = 16/32
+
+	[GPU cuda] Epoch 81
+	[GPU cuda] Epoch 82
+	[GPU cuda] Epoch 83
+	[GPU cuda] Epoch 84
+	[GPU cuda] Epoch 85
+	[GPU cuda] Epoch 86
+	[GPU cuda] Epoch 87
+	[GPU cuda] Epoch 88
+	[GPU cuda] Epoch 89
+	[GPU cuda] Epoch 90
+	Model Saved at Epoch 90
+	Train Metrics:
+		Loss: 0.6931471824645996 = 69.3147201538086/100
+		Accuracy: 0.5 = 100/200
+
+	Test Metrics:
+		Loss: 0.6931470632553101 = 22.180706024169922/32
+		Accuracy: 0.5 = 16/32
+
+	[GPU cuda] Epoch 91
+	[GPU cuda] Epoch 92
+	[GPU cuda] Epoch 93
+	[GPU cuda] Epoch 94
+	[GPU cuda] Epoch 95
+	[GPU cuda] Epoch 96
+	[GPU cuda] Epoch 97
+	[GPU cuda] Epoch 98
+	[GPU cuda] Epoch 99
+	[GPU cuda] Epoch 100
+	Model Saved at Epoch 100
+	Train Metrics:
+		Loss: 0.6931468844413757 = 69.31468963623047/100
+		Accuracy: 0.5 = 100/200
+
+	Test Metrics:
+		Loss: 0.6931473016738892 = 22.180713653564453/32
+		Accuracy: 0.5 = 16/32
+
+Finished Training
+Time to run 100 epochs: 2:35:07.898749 (HH:MM:SS)

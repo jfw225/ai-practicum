@@ -26,13 +26,13 @@ VAYNE_PATH = "/home/joe/ai-practicum/fmri-data/"
 
 def main(device):
     random.seed(123)
-    os.environ['CUDA_VISIBLE_DEVICES'] = '3'
+    os.environ['CUDA_VISIBLE_DEVICES'] = '2'
     #  '3' -> GPU 1
     #  '1' -> GPU 2
     #  '0' -> GPU 3
     #  '2' -> GPU 0
 
-    batch_size = 1
+    batch_size = 2
     training_generator, test_generator = get_train_test_dataloader(
         (0.8, 0.2), batch_size, balance=True)
 
