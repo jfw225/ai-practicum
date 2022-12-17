@@ -1,3 +1,38 @@
 \begin{thebibliography}{}
 
+\bibitem[adn, 2022]{adni}
+ (2022).
+\newblock Adni mri acquisition.
+
+\bibitem[Folego et~al., 2020]{3d-CNN}
+Folego, G., Weiler, M., Casseb, R.~F., Pires, R., and Rocha, A. (2020).
+\newblock Alzheimer's disease detection through whole-brain 3d-cnn mri.
+\newblock {\em Frontiers in Bioengineering and Biotechnology}, 8.
+
+\bibitem[Hassan et~al., 2016]{radiomic_texture_analysis}
+Hassan, I., Kotrotsou, A., Shojaee~Bakhtiari, A., Thomas, G., Weinberg, J.,
+  Kumar, J., Sawaya, R., Luedi, M., Zinn, P., and Colen, R. (2016).
+\newblock Radiomic texture analysis mapping predicts areas of true functional
+  mri activity.
+\newblock {\em Scientific Reports}, 6.
+
+\bibitem[Li et~al., 2022]{LSTM}
+Li, J., Song, B., and Qian, C. (2022).
+\newblock Diagnosis of alzheimer’s disease by feature weighted-lstm: a
+  preliminary study of temporal features in brain resting-state fmri.
+\newblock {\em Journal of Integrative Neuroscience}.
+
+\bibitem[Li et~al., 2020]{Conv-LSTM}
+Li, W., Lin, X., and Chen, X. (2020).
+\newblock Detecting alzheimer’s disease based on 4d fmri: An exploration
+  under deep learning framework.
+\newblock {\em Neurocomputing}.
+
+\bibitem[Liang et~al., 2021]{2d-CNN}
+Liang, G., Xing, X., Liu, L., Zhang, Y., Ying, Q., Lin, A.-L., and Jacobs, N.
+  (2021).
+\newblock Alzheimer’s disease classification using 2d convolutional neural
+  networks.
+\newblock {\em IEEE Xplore}.
+
 \end{thebibliography}
