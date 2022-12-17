@@ -28,10 +28,10 @@ def get_FWHM_gaussian_kernel(fwhm):
 
 
 def get_FWHM_gaussian_blur(t, kernel_3d):
-    reshaped_t = t[:, None, :, :, :].float()
-    reshaped_k = kernel_3d[None, None, :, :, :]
-    # reshaped_t = t[:, None, :, :, :].float().to('cuda')
-    # reshaped_k = kernel_3d[None, None, :, :, :].to('cuda')
+    # reshaped_t = t[:, None, :, :, :].float()
+    # reshaped_k = kernel_3d[None, None, :, :, :]
+    reshaped_t = t[:, None, :, :, :].float().to('cuda')
+    reshaped_k = kernel_3d[None, None, :, :, :].to('cuda')
 
     # 7 = kernel_3d.shape[0]= len(k) = len(ts) = len(gauss)
 

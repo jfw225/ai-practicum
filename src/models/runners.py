@@ -26,6 +26,11 @@ from matplotlib import pyplot as plt
 # CHECKPOINT_PATH = "./checkpoints/model_7.pt"
 # CHECKPOINT_PATH = "./checkpoints/model_8.pt"
 
+# CHECKPOINT_PATH = "./checkpoints/model_9.pt"
+# CHECKPOINT_PATH = "./checkpoints/model_10.pt"
+# CHECKPOINT_PATH = "./checkpoints/model_11.pt"
+# CHECKPOINT_PATH = "./checkpoints/model_12.pt"
+
 
 class Trainer():
     def __init__(
@@ -62,11 +67,11 @@ class Trainer():
     def _run_epoch(self, epoch: int):
         self.model.train()
         print(f'\t[GPU {self.gpu_id}] Epoch {epoch}')
-        i = 1
-        all = len(self.train_data)
+        # i = 1
+        # all = len(self.train_data)
         for batch_tensor, batch_labels in self.train_data:
-            print(f'\t{i}/{len(self.train_data)}')
-            i += 1
+            # print(f'\t{i}/{len(self.train_data)}')
+            # i += 1
             batch_tensor = batch_tensor.to(self.gpu_id)
             # check batch labels type
             batch_labels = batch_labels.to(self.gpu_id)

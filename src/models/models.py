@@ -200,10 +200,10 @@ class Convolution(nn.Module):
         # self.pooling3d_3 = nn.MaxPool3d(pool_kernel)
 
         self.flatten = nn.Flatten()  # batch flatten
-        self.dropout = nn.Dropout(0.2)
-        print('nn.Dropout(0.2)')
-        # self.dropout = nn.Dropout(0.5)
-        # print('nn.Dropout(0.5)')
+        # self.dropout = nn.Dropout(0.2)
+        # print('nn.Dropout(0.2)')
+        self.dropout = nn.Dropout(0.5)
+        print('nn.Dropout(0.5)')
         self.fc1 = nn.Linear(576, 192)
         # self.fc1 = nn.Linear(512, 256)
         self.relu = nn.ReLU()
