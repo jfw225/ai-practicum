@@ -1,13 +1,13 @@
 # Fdb version 3
-["bibtex report"] 1671238206 "report.aux" "report.bbl" "report" 1671238206
+["bibtex report"] 1671238206 "report.aux" "report.bbl" "report" 1671238498
   "./apalike.bst" 1670896393 24647 fc288d638b47d1c5f8e662f87e5a4da2 ""
   "references.bib" 1671230892 919 50d65ca29d48eaf5c560a4ba74dc9d27 ""
-  "report.aux" 1671238206 3258 ec86265581826a41b9381e8b30df16d0 "pdflatex"
+  "report.aux" 1671238498 3258 ec86265581826a41b9381e8b30df16d0 "pdflatex"
   (generated)
   "report.bbl"
   "report.blg"
-["pdflatex"] 1671238206 "/Users/whelajos/school/ai-practicum/report/report.tex" "report.pdf" "report" 1671238206
-  "/Users/whelajos/school/ai-practicum/report/report.tex" 1671238204 24876 e8dbfee0fa38c603a2ba9cae9c39a67d ""
+["pdflatex"] 1671238497 "/Users/whelajos/school/ai-practicum/report/report.tex" "report.pdf" "report" 1671238498
+  "/Users/whelajos/school/ai-practicum/report/report.tex" 1671238497 25006 9f7dd29a5335c4d730c7004b59ed8ba5 ""
   "/usr/local/texlive/2022/texmf-dist/fonts/enc/dvips/base/8r.enc" 1165713224 4850 80dc9bab7f31fb78a000ccfed0e27cab ""
   "/usr/local/texlive/2022/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/local/texlive/2022/texmf-dist/fonts/tfm/adobe/helvetic/phvb8r.tfm" 1136768653 4484 b828043cbd581d289d955903c1339981 ""
@@ -157,10 +157,10 @@
   "/usr/local/texlive/2022/texmf.cnf" 1647878952 577 209b46be99c9075fd74d4c0369380e8c ""
   "caption2.sty" 1670896393 15190 35c3352faab63b28086162350d49d218 ""
   "figures/scan.png" 1671227019 149755 28f7c3d124b00501dcdc15df8704e6ea ""
-  "report.aux" 1671238206 3258 ec86265581826a41b9381e8b30df16d0 "pdflatex"
+  "report.aux" 1671238498 3258 ec86265581826a41b9381e8b30df16d0 "pdflatex"
   "report.bbl" 1671238206 452 d568a0617cd5db04add26e2da347d83e "bibtex report"
-  "report.out" 1671238206 1876 f800be421b0b030a41a03bc977d6401e "pdflatex"
-  "report.tex" 1671238204 24876 e8dbfee0fa38c603a2ba9cae9c39a67d ""
+  "report.out" 1671238498 1876 f800be421b0b030a41a03bc977d6401e "pdflatex"
+  "report.tex" 1671238497 25006 9f7dd29a5335c4d730c7004b59ed8ba5 ""
   "sbc-template.sty" 1670896393 5570 925e6df71377501a237447ceeadc95aa ""
   (generated)
   "report.aux"
